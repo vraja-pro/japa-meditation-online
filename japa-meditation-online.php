@@ -124,7 +124,6 @@ function mm_shortcode( $atts ) {
 
         <div class="mm-modal-overlay" id="mm-modal" aria-hidden="true">
             <div class="mm-modal">
-                <div class="mm-modal-om">ॐ</div>
                 <h2>Session Complete</h2>
                 <div class="mm-modal-stats">
                     <div class="mm-modal-stat">

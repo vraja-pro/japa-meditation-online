@@ -108,8 +108,8 @@
   const svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
   svgDefs.innerHTML = `
     <linearGradient id="mm-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#d4a843"/>
-      <stop offset="100%" stop-color="#e8732a"/>
+      <stop offset="0%"   stop-color="#f5a254"/>
+      <stop offset="100%" stop-color="#c45e0a"/>
     </linearGradient>`;
   document.querySelector('.mm-ring').prepend(svgDefs);
 
@@ -489,7 +489,7 @@
       item.className = 'mm-history-item';
       item.innerHTML = `
         <div>
-          <div style="color:var(--mm-text);font-size:.82rem;">ॐ Session</div>
+          <div style="color:var(--mm-text);font-size:.82rem;">Session</div>
           <div class="mm-history-date">${date}</div>
           ${row.notes ? `<div style="font-size:.72rem;color:var(--mm-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
         </div>
