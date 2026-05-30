@@ -493,9 +493,15 @@
           <div class="mm-history-date">${date}</div>
           ${row.notes ? `<div style="font-size:.72rem;color:var(--mm-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
         </div>
-        <div style="display:flex;gap:14px;align-items:center;">
-          <div class="mm-history-count">${row.mantra_count}</div>
-          <div class="mm-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+        <div style="display:flex;gap:20px;align-items:flex-end;">
+          <div style="text-align:center;min-width:40px;">
+            <div class="mm-history-count">${row.mantra_count}</div>
+            <div class="mm-history-stat-label">rounds</div>
+          </div>
+          <div style="text-align:center;min-width:48px;">
+            <div class="mm-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+            <div class="mm-history-stat-label">duration</div>
+          </div>
         </div>`;
       historyEl.appendChild(item);
     });

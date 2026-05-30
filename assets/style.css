@@ -499,9 +499,25 @@
 }
 .mm-history-item:last-child { border-bottom: none; }
 
-.mm-history-date  { color: var(--mm-text-dim); font-size: .72rem; }
-.mm-history-count { font-family: 'Cormorant Garamond', serif; color: var(--mm-saffron-deep); font-size: 1.1rem; font-weight: 700; }
-.mm-history-time  { color: var(--mm-terra); font-size: .78rem; font-weight: 500; }
+.mm-history-date       { color: var(--mm-text-dim); font-size: .72rem; }
+.mm-history-count,
+.mm-history-time       {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.mm-history-count      { color: var(--mm-saffron-deep); }
+.mm-history-time       { color: var(--mm-terra); }
+.mm-history-stat-label {
+  font-family: 'Jost', sans-serif;
+  font-size: .58rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--mm-text-dim);
+  font-weight: 500;
+  margin-top: 2px;
+}
 
 /* ── Modal ─────────────────────────────────────────────── */
 .mm-modal-overlay {
