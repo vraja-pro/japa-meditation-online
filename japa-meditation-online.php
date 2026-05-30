@@ -123,23 +123,30 @@ function mm_shortcode( $atts ) {
         </div>
 
         <div class="mm-modal-overlay" id="mm-modal" aria-hidden="true">
-            <div class="mm-modal">
-                <h2>Session Complete</h2>
-                <div class="mm-modal-stats">
-                    <div class="mm-modal-stat">
-                        <span class="mm-modal-num" id="mm-modal-count">0</span>
-                        <span class="mm-modal-lbl">Mantras</span>
-                    </div>
-                    <div class="mm-modal-stat">
-                        <span class="mm-modal-num" id="mm-modal-time">0:00</span>
-                        <span class="mm-modal-lbl">Duration</span>
-                    </div>
+        <div class="mm-modal">
+            <div class="mm-modal-header">
+                <div class="mm-modal-om">ॐ</div>
+                <h2 class="mm-modal-title">Session Complete</h2>
+                <p class="mm-modal-subtitle">Hare Krishna</p>
+            </div>
+            <div class="mm-modal-stats">
+                <div class="mm-modal-stat">
+                    <span class="mm-modal-num" id="mm-modal-count">0</span>
+                    <span class="mm-modal-lbl">Rounds</span>
                 </div>
-                <textarea class="mm-notes" id="mm-notes" placeholder="Session notes (optional)…" rows="3"></textarea>
-                <div class="mm-modal-actions">
-                    <button class="mm-btn mm-btn-primary"   id="mm-save-btn">Save Session</button>
-                    <button class="mm-btn mm-btn-secondary" id="mm-discard-btn">Discard</button>
+                <div class="mm-modal-stat-divider"></div>
+                <div class="mm-modal-stat">
+                    <span class="mm-modal-num" id="mm-modal-time">0:00</span>
+                    <span class="mm-modal-lbl">Duration</span>
                 </div>
+            </div>
+            <div class="mm-modal-notes-wrap">
+                <label class="mm-modal-notes-label" for="mm-notes">Notes <span>(optional)</span></label>
+                <textarea class="mm-notes" id="mm-notes" placeholder="How was your practice?…" rows="3"></textarea>
+            </div>
+            <div class="mm-modal-actions">
+                <button class="mm-btn mm-btn-primary" id="mm-save-btn">Save Session</button>
+                <button class="mm-btn mm-btn-ghost"   id="mm-discard-btn">Discard</button>
             </div>
         </div>
 
