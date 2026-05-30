@@ -11,10 +11,10 @@
   /* ═══════════════════════════════════════════════════════
      CONFIG
   ═══════════════════════════════════════════════════════ */
-  const ROOT   = document.getElementById('mm-root');
+  const ROOT   = document.getElementById('jmo-root');
   const TARGET = parseInt(ROOT?.dataset.target || 108, 10);
 
-  const I18N   = window.MM_I18N || {};
+  const I18N   = window.JMO_I18N || {};
 
   // Full maha-mantra: Hare Krishna Hare Krishna Krishna Krishna Hare Hare
   //                   Hare Rama    Hare Rama    Rama    Rama    Hare Hare
@@ -83,38 +83,38 @@
   /* ═══════════════════════════════════════════════════════
      DOM
   ═══════════════════════════════════════════════════════ */
-  const countEl      = document.getElementById('mm-count');
-  const timerEl      = document.getElementById('mm-timer');
-  const progressCirc = document.getElementById('mm-progress-circle');
-  const voiceStatus  = document.getElementById('mm-voice-status');
-  const voiceText    = document.getElementById('mm-voice-text');
-  const transcriptEl = document.getElementById('mm-transcript');
-  const stopBtn      = document.getElementById('mm-stop-btn');
-  const resetBtn     = document.getElementById('mm-reset-btn');
-  const voiceToggle  = document.getElementById('mm-voice-toggle');
-  const paceBtnsEl   = document.getElementById('mm-pace-btns');
-  const pacePlayBtn  = document.getElementById('mm-pace-play');
-  const pacePauseBtn = document.getElementById('mm-pace-pause');
-  const manualBtn    = document.getElementById('mm-manual-btn');
-  const historyEl    = document.getElementById('mm-history');
-  const modal        = document.getElementById('mm-modal');
-  const modalCount   = document.getElementById('mm-modal-count');
-  const modalTime    = document.getElementById('mm-modal-time');
-  const notesEl      = document.getElementById('mm-notes');
-  const saveBtn      = document.getElementById('mm-save-btn');
-  const discardBtn   = document.getElementById('mm-discard-btn');
-  const langBadgeEl  = document.getElementById('mm-lang-badge');
+  const countEl      = document.getElementById('jmo-count');
+  const timerEl      = document.getElementById('jmo-timer');
+  const progressCirc = document.getElementById('jmo-progress-circle');
+  const voiceStatus  = document.getElementById('jmo-voice-status');
+  const voiceText    = document.getElementById('jmo-voice-text');
+  const transcriptEl = document.getElementById('jmo-transcript');
+  const stopBtn      = document.getElementById('jmo-stop-btn');
+  const resetBtn     = document.getElementById('jmo-reset-btn');
+  const voiceToggle  = document.getElementById('jmo-voice-toggle');
+  const paceBtnsEl   = document.getElementById('jmo-pace-btns');
+  const pacePlayBtn  = document.getElementById('jmo-pace-play');
+  const pacePauseBtn = document.getElementById('jmo-pace-pause');
+  const manualBtn    = document.getElementById('jmo-manual-btn');
+  const historyEl    = document.getElementById('jmo-history');
+  const modal        = document.getElementById('jmo-modal');
+  const modalCount   = document.getElementById('jmo-modal-count');
+  const modalTime    = document.getElementById('jmo-modal-time');
+  const notesEl      = document.getElementById('jmo-notes');
+  const saveBtn      = document.getElementById('jmo-save-btn');
+  const discardBtn   = document.getElementById('jmo-discard-btn');
+  const langBadgeEl  = document.getElementById('jmo-lang-badge');
 
   /* ═══════════════════════════════════════════════════════
      SVG GRADIENT
   ═══════════════════════════════════════════════════════ */
   const svgDefs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
   svgDefs.innerHTML = `
-    <linearGradient id="mm-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="jmo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%"   stop-color="#f5a254"/>
       <stop offset="100%" stop-color="#c45e0a"/>
     </linearGradient>`;
-  document.querySelector('.mm-ring').prepend(svgDefs);
+  document.querySelector('.jmo-ring').prepend(svgDefs);
 
   /* ═══════════════════════════════════════════════════════
      TIMER
@@ -155,10 +155,10 @@
   function incrementCount(n) {
     if (!running || n <= 0) return;
     setCount(count + n);
-    countEl.classList.remove('mm-bump');
+    countEl.classList.remove('jmo-bump');
     void countEl.offsetWidth;
-    countEl.classList.add('mm-bump');
-    setTimeout(() => countEl.classList.remove('mm-bump'), 200);
+    countEl.classList.add('jmo-bump');
+    setTimeout(() => countEl.classList.remove('jmo-bump'), 200);
     spawnRipple();
     resetInactivity();
     if (voiceEnabled) {
@@ -168,10 +168,10 @@
   }
 
   function spawnRipple() {
-    const ring = document.querySelector('.mm-ring-wrap');
+    const ring = document.querySelector('.jmo-ring-wrap');
     const rect = ring.getBoundingClientRect();
     const div  = document.createElement('div');
-    div.className = 'mm-ripple';
+    div.className = 'jmo-ripple';
     const sz = 60;
     div.style.cssText = `width:${sz}px;height:${sz}px;left:${rect.left + rect.width / 2 - sz / 2}px;top:${rect.top + rect.height / 2 - sz / 2}px;`;
     document.body.appendChild(div);
@@ -296,15 +296,15 @@
   function initTranscript() {
     transcriptEl.innerHTML = MANTRA_WORDS.map((word, i) => {
       const prefix = i > 0 && i % 4 === 0 ? '<br>' : (i > 0 ? ' ' : '');
-      return `${prefix}<span class="mm-mantra-word mm-word-${MANTRA_TYPES[i]}">${word}</span>`;
+      return `${prefix}<span class="jmo-mantra-word jmo-word-${MANTRA_TYPES[i]}">${word}</span>`;
     }).join('');
     updateMantraHighlight();
   }
 
   function updateMantraHighlight() {
-    transcriptEl.querySelectorAll('.mm-mantra-word').forEach((span, i) => {
-      span.classList.toggle('mm-word-lit',  i < carryStreak);
-      span.classList.toggle('mm-word-next', paceMode && running && i === carryStreak);
+    transcriptEl.querySelectorAll('.jmo-mantra-word').forEach((span, i) => {
+      span.classList.toggle('jmo-word-lit',  i < carryStreak);
+      span.classList.toggle('jmo-word-next', paceMode && running && i === carryStreak);
     });
   }
 
@@ -312,21 +312,21 @@
      STATUS BAR
   ═══════════════════════════════════════════════════════ */
   function setVoiceStatus(state) {
-    voiceStatus.classList.remove('mm-active', 'mm-detecting');
+    voiceStatus.classList.remove('jmo-active', 'jmo-detecting');
     if (langBadgeEl) langBadgeEl.textContent = '';
     switch (state) {
       case 'active':
-        voiceStatus.classList.add('mm-active');
+        voiceStatus.classList.add('jmo-active');
         voiceText.textContent = I18N.listening   || 'Listening…';
         if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'transcribing':
-        voiceStatus.classList.add('mm-active');
+        voiceStatus.classList.add('jmo-active');
         voiceText.textContent = I18N.recognising || 'Recognising…';
         if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'detected':
-        voiceStatus.classList.add('mm-detecting');
+        voiceStatus.classList.add('jmo-detecting');
         voiceText.textContent = I18N.detected    || '🙏 Mantra counted!';
         break;
       default:
@@ -373,11 +373,11 @@
   pacePlayBtn.addEventListener('click',  () => setPaceRunning(true));
   pacePauseBtn.addEventListener('click', () => setPaceRunning(false));
 
-  paceBtnsEl.querySelectorAll('.mm-pace-btn').forEach(btn => {
+  paceBtnsEl.querySelectorAll('.jmo-pace-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       paceSpeed = btn.dataset.pace;
-      paceBtnsEl.querySelectorAll('.mm-pace-btn').forEach(b => b.classList.remove('mm-pace-selected'));
-      btn.classList.add('mm-pace-selected');
+      paceBtnsEl.querySelectorAll('.jmo-pace-btn').forEach(b => b.classList.remove('jmo-pace-selected'));
+      btn.classList.add('jmo-pace-selected');
       if (paceMode && running) startPace();
     });
   });
@@ -425,7 +425,7 @@
     modalCount.textContent = count;
     modalTime.textContent  = formatTime(elapsed);
     notesEl.value = '';
-    modal.classList.add('mm-open');
+    modal.classList.add('jmo-open');
     modal.setAttribute('aria-hidden', 'false');
   }
 
@@ -454,7 +454,7 @@
   ═══════════════════════════════════════════════════════ */
   saveBtn.addEventListener('click',    () => { saveSession(count, elapsed, notesEl.value.trim()); closeModal(); });
   discardBtn.addEventListener('click', () => { closeModal(); doReset(); });
-  function closeModal() { modal.classList.remove('mm-open'); modal.setAttribute('aria-hidden', 'true'); }
+  function closeModal() { modal.classList.remove('jmo-open'); modal.setAttribute('aria-hidden', 'true'); }
 
   function doReset() {
     elapsed = 0; carryStreak = 0;
@@ -501,21 +501,21 @@
       const m = Math.floor(row.duration_sec / 60), s = row.duration_sec % 60;
       const date = new Date(row.session_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
       const item = document.createElement('div');
-      item.className = 'mm-history-item';
+      item.className = 'jmo-history-item';
       item.innerHTML = `
         <div>
-          <div style="color:var(--mm-text);font-size:.82rem;">${I18N.session_label || 'Session'}</div>
-          <div class="mm-history-date">${date}</div>
-          ${row.notes ? `<div style="font-size:.72rem;color:var(--mm-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
+          <div style="color:var(--jmo-text);font-size:.82rem;">${I18N.session_label || 'Session'}</div>
+          <div class="jmo-history-date">${date}</div>
+          ${row.notes ? `<div style="font-size:.72rem;color:var(--jmo-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
         </div>
         <div style="display:flex;gap:20px;align-items:flex-end;">
           <div style="text-align:center;min-width:40px;">
-            <div class="mm-history-count">${row.mantra_count}</div>
-            <div class="mm-history-stat-label">${I18N.stat_rounds || 'rounds'}</div>
+            <div class="jmo-history-count">${row.mantra_count}</div>
+            <div class="jmo-history-stat-label">${I18N.stat_rounds || 'rounds'}</div>
           </div>
           <div style="text-align:center;min-width:48px;">
-            <div class="mm-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-            <div class="mm-history-stat-label">${I18N.stat_duration || 'duration'}</div>
+            <div class="jmo-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
+            <div class="jmo-history-stat-label">${I18N.stat_duration || 'duration'}</div>
           </div>
         </div>`;
       historyEl.appendChild(item);

@@ -45,8 +45,8 @@ function mm_enqueue() {
     global $post;
     if ( ! is_a( $post, 'WP_Post' ) || ! has_shortcode( $post->post_content, 'mantra_meditation' ) ) return;
 
-    wp_enqueue_style(  'mm-style', MM_PLUGIN_URL . 'assets/style.css', [], time() );
-    wp_enqueue_script( 'mm-app',   MM_PLUGIN_URL . 'assets/app.js',   [], time(), true );
+    wp_enqueue_style(  'jmo-style', MM_PLUGIN_URL . 'assets/style.css', [], time() );
+    wp_enqueue_script( 'jmo-app',   MM_PLUGIN_URL . 'assets/app.js',   [], time(), true );
 }
 
 /* ──────────────────────────────────────────────
@@ -150,107 +150,107 @@ function mm_shortcode( $atts ) {
     $s         = mm_get_strings( $lang_base );
 
     ob_start(); ?>
-    <script>window.MM_I18N = <?php echo wp_json_encode( $s ); ?>;</script>
-    <div id="mm-root" data-target="<?php echo esc_attr( $atts['target'] ); ?>" data-lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
+    <script>window.JMO_I18N = <?php echo wp_json_encode( $s ); ?>;</script>
+    <div id="jmo-root" data-target="<?php echo esc_attr( $atts['target'] ); ?>" data-lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 
-        <div class="mm-header">
-            <div class="mm-om">हरि कृष्ण</div>
-            <h1 class="mm-title"><?php echo esc_html( $s['title'] ); ?></h1>
+        <div class="jmo-header">
+            <div class="jmo-om">हरि कृष्ण</div>
+            <h1 class="jmo-title"><?php echo esc_html( $s['title'] ); ?></h1>
         </div>
 
-        <div class="mm-ring-wrap">
-            <svg class="mm-ring" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
-                <circle class="mm-ring-bg"       cx="110" cy="110" r="96"/>
-                <circle class="mm-ring-progress" cx="110" cy="110" r="96" id="mm-progress-circle"/>
+        <div class="jmo-ring-wrap">
+            <svg class="jmo-ring" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+                <circle class="jmo-ring-bg"       cx="110" cy="110" r="96"/>
+                <circle class="jmo-ring-progress" cx="110" cy="110" r="96" id="jmo-progress-circle"/>
             </svg>
-            <div class="mm-ring-inner">
-                <div class="mm-count" id="mm-count">0</div>
-                <div class="mm-count-label"><?php echo esc_html( $s['mantras_label'] ); ?></div>
-                <div class="mm-timer" id="mm-timer">00:00</div>
+            <div class="jmo-ring-inner">
+                <div class="jmo-count" id="jmo-count">0</div>
+                <div class="jmo-count-label"><?php echo esc_html( $s['mantras_label'] ); ?></div>
+                <div class="jmo-timer" id="jmo-timer">00:00</div>
             </div>
         </div>
 
-        <div class="mm-transcript" id="mm-transcript"></div>
+        <div class="jmo-transcript" id="jmo-transcript"></div>
 
-        <div class="mm-controls">
-            <button class="mm-btn mm-btn-secondary" id="mm-stop-btn" disabled>
-                <span class="mm-btn-icon">■</span> <?php echo esc_html( $s['end_session'] ); ?>
+        <div class="jmo-controls">
+            <button class="jmo-btn jmo-btn-secondary" id="jmo-stop-btn" disabled>
+                <span class="jmo-btn-icon">■</span> <?php echo esc_html( $s['end_session'] ); ?>
             </button>
-            <button class="mm-btn mm-btn-reset" id="mm-reset-btn">↺ <?php echo esc_html( $s['reset'] ); ?></button>
+            <button class="jmo-btn jmo-btn-reset" id="jmo-reset-btn">↺ <?php echo esc_html( $s['reset'] ); ?></button>
         </div>
 
-        <div class="mm-modes">
+        <div class="jmo-modes">
 
-            <div class="mm-mode">
-                <span class="mm-mode-label"><?php echo esc_html( $s['mode_manual'] ); ?></span>
-                <button class="mm-btn mm-btn-primary mm-manual-btn" id="mm-manual-btn">
-                    <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="mm-kbd">↑</span><span class="mm-or"> or </span><span class="mm-kbd">Space</span>
+            <div class="jmo-mode">
+                <span class="jmo-mode-label"><?php echo esc_html( $s['mode_manual'] ); ?></span>
+                <button class="jmo-btn jmo-btn-primary jmo-manual-btn" id="jmo-manual-btn">
+                    <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> or </span><span class="jmo-kbd">Space</span>
                 </button>
             </div>
 
-            <div class="mm-mode">
-                <span class="mm-mode-label"><?php echo esc_html( $s['mode_auto'] ); ?></span>
-                <div class="mm-mode-row">
-                    <label class="mm-toggle-wrap">
-                        <input type="checkbox" id="mm-voice-toggle" />
-                        <span class="mm-toggle-slider"></span>
-                        <span class="mm-toggle-label"><?php echo esc_html( $s['enable_voice'] ); ?></span>
+            <div class="jmo-mode">
+                <span class="jmo-mode-label"><?php echo esc_html( $s['mode_auto'] ); ?></span>
+                <div class="jmo-mode-row">
+                    <label class="jmo-toggle-wrap">
+                        <input type="checkbox" id="jmo-voice-toggle" />
+                        <span class="jmo-toggle-slider"></span>
+                        <span class="jmo-toggle-label"><?php echo esc_html( $s['enable_voice'] ); ?></span>
                     </label>
-                    <div class="mm-voice-status" id="mm-voice-status">
-                        <div class="mm-pulse" id="mm-pulse"></div>
-                        <span id="mm-voice-text"><?php echo esc_html( $s['voice_off'] ); ?></span>
-                        <span id="mm-lang-badge" class="mm-lang-badge"></span>
+                    <div class="jmo-voice-status" id="jmo-voice-status">
+                        <div class="jmo-pulse" id="jmo-pulse"></div>
+                        <span id="jmo-voice-text"><?php echo esc_html( $s['voice_off'] ); ?></span>
+                        <span id="jmo-lang-badge" class="jmo-lang-badge"></span>
                     </div>
                 </div>
             </div>
 
-            <div class="mm-mode">
-                <span class="mm-mode-label"><?php echo esc_html( $s['mode_guided'] ); ?></span>
-                <div class="mm-pace-btns" id="mm-pace-btns">
-                    <button class="mm-pace-btn" data-pace="slow"><?php echo esc_html( $s['slow'] ); ?></button>
-                    <button class="mm-pace-btn mm-pace-selected" data-pace="medium"><?php echo esc_html( $s['medium'] ); ?></button>
-                    <button class="mm-pace-btn" data-pace="fast"><?php echo esc_html( $s['fast'] ); ?></button>
+            <div class="jmo-mode">
+                <span class="jmo-mode-label"><?php echo esc_html( $s['mode_guided'] ); ?></span>
+                <div class="jmo-pace-btns" id="jmo-pace-btns">
+                    <button class="jmo-pace-btn" data-pace="slow"><?php echo esc_html( $s['slow'] ); ?></button>
+                    <button class="jmo-pace-btn jmo-pace-selected" data-pace="medium"><?php echo esc_html( $s['medium'] ); ?></button>
+                    <button class="jmo-pace-btn" data-pace="fast"><?php echo esc_html( $s['fast'] ); ?></button>
                 </div>
-                <div class="mm-pace-controls">
-                    <button class="mm-btn mm-btn-primary mm-pace-play" id="mm-pace-play"><?php echo esc_html( $s['play'] ); ?></button>
-                    <button class="mm-btn mm-btn-secondary mm-pace-pause" id="mm-pace-pause" disabled><?php echo esc_html( $s['pause'] ); ?></button>
+                <div class="jmo-pace-controls">
+                    <button class="jmo-btn jmo-btn-primary jmo-pace-play" id="jmo-pace-play"><?php echo esc_html( $s['play'] ); ?></button>
+                    <button class="jmo-btn jmo-btn-secondary jmo-pace-pause" id="jmo-pace-pause" disabled><?php echo esc_html( $s['pause'] ); ?></button>
                 </div>
             </div>
 
         </div>
 
-        <div class="mm-history-wrap">
-            <h3 class="mm-history-title"><?php echo esc_html( $s['history_title'] ); ?></h3>
-            <div class="mm-history" id="mm-history">
-                <p class="mm-history-empty"><?php echo esc_html( $s['history_empty'] ); ?></p>
+        <div class="jmo-history-wrap">
+            <h3 class="jmo-history-title"><?php echo esc_html( $s['history_title'] ); ?></h3>
+            <div class="jmo-history" id="jmo-history">
+                <p class="jmo-history-empty"><?php echo esc_html( $s['history_empty'] ); ?></p>
             </div>
         </div>
 
-        <div class="mm-modal-overlay" id="mm-modal" aria-hidden="true">
-        <div class="mm-modal">
-            <div class="mm-modal-header">
-                <div class="mm-modal-om">ॐ</div>
-                <h2 class="mm-modal-title"><?php echo esc_html( $s['modal_title'] ); ?></h2>
-                <p class="mm-modal-subtitle"><?php echo esc_html( $s['modal_subtitle'] ); ?></p>
+        <div class="jmo-modal-overlay" id="jmo-modal" aria-hidden="true">
+        <div class="jmo-modal">
+            <div class="jmo-modal-header">
+                <div class="jmo-modal-om">ॐ</div>
+                <h2 class="jmo-modal-title"><?php echo esc_html( $s['modal_title'] ); ?></h2>
+                <p class="jmo-modal-subtitle"><?php echo esc_html( $s['modal_subtitle'] ); ?></p>
             </div>
-            <div class="mm-modal-stats">
-                <div class="mm-modal-stat">
-                    <span class="mm-modal-num" id="mm-modal-count">0</span>
-                    <span class="mm-modal-lbl"><?php echo esc_html( $s['rounds'] ); ?></span>
+            <div class="jmo-modal-stats">
+                <div class="jmo-modal-stat">
+                    <span class="jmo-modal-num" id="jmo-modal-count">0</span>
+                    <span class="jmo-modal-lbl"><?php echo esc_html( $s['rounds'] ); ?></span>
                 </div>
-                <div class="mm-modal-stat-divider"></div>
-                <div class="mm-modal-stat">
-                    <span class="mm-modal-num" id="mm-modal-time">0:00</span>
-                    <span class="mm-modal-lbl"><?php echo esc_html( $s['duration'] ); ?></span>
+                <div class="jmo-modal-stat-divider"></div>
+                <div class="jmo-modal-stat">
+                    <span class="jmo-modal-num" id="jmo-modal-time">0:00</span>
+                    <span class="jmo-modal-lbl"><?php echo esc_html( $s['duration'] ); ?></span>
                 </div>
             </div>
-            <div class="mm-modal-notes-wrap">
-                <label class="mm-modal-notes-label" for="mm-notes"><?php echo esc_html( $s['notes_label'] ); ?> <span><?php echo esc_html( $s['notes_optional'] ); ?></span></label>
-                <textarea class="mm-notes" id="mm-notes" placeholder="<?php echo esc_attr( $s['notes_placeholder'] ); ?>" rows="3"></textarea>
+            <div class="jmo-modal-notes-wrap">
+                <label class="jmo-modal-notes-label" for="jmo-notes"><?php echo esc_html( $s['notes_label'] ); ?> <span><?php echo esc_html( $s['notes_optional'] ); ?></span></label>
+                <textarea class="jmo-notes" id="jmo-notes" placeholder="<?php echo esc_attr( $s['notes_placeholder'] ); ?>" rows="3"></textarea>
             </div>
-            <div class="mm-modal-actions">
-                <button class="mm-btn mm-btn-primary" id="mm-save-btn"><?php echo esc_html( $s['save'] ); ?></button>
-                <button class="mm-btn mm-btn-ghost"   id="mm-discard-btn"><?php echo esc_html( $s['discard'] ); ?></button>
+            <div class="jmo-modal-actions">
+                <button class="jmo-btn jmo-btn-primary" id="jmo-save-btn"><?php echo esc_html( $s['save'] ); ?></button>
+                <button class="jmo-btn jmo-btn-ghost"   id="jmo-discard-btn"><?php echo esc_html( $s['discard'] ); ?></button>
             </div>
         </div>
 
