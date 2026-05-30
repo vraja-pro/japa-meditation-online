@@ -521,6 +521,7 @@
 
   function renderHistory(rows) {
     historyEl.innerHTML = '';
+
     rows.forEach(row => {
       const m = Math.floor(row.duration_sec / 60), s = row.duration_sec % 60;
       const d = new Date(row.session_date);
@@ -549,6 +550,32 @@
         </div>`;
       historyEl.appendChild(item);
     });
+
+    // Totals row
+    const totalMantras  = rows.reduce((a, r) => a + r.mantra_count, 0);
+    const totalRounds   = rows.reduce((a, r) => a + (r.rounds ?? Math.floor(r.mantra_count / 108)), 0);
+    const totalSec      = rows.reduce((a, r) => a + r.duration_sec, 0);
+    const tm = Math.floor(totalSec / 60), ts = totalSec % 60;
+
+    const totals = document.createElement('div');
+    totals.className = 'jmo-history-totals';
+    totals.innerHTML = `
+      <span class="jmo-history-totals-label">${I18N.total || 'Total'}</span>
+      <div style="display:flex;gap:16px;align-items:flex-end;">
+        <div style="text-align:center;min-width:36px;">
+          <div class="jmo-history-count">${totalMantras}</div>
+          <div class="jmo-history-stat-label">${I18N.mantras_label || 'mantras'}</div>
+        </div>
+        <div style="text-align:center;min-width:36px;">
+          <div class="jmo-history-count">${totalRounds}</div>
+          <div class="jmo-history-stat-label">${I18N.stat_rounds || 'rounds'}</div>
+        </div>
+        <div style="text-align:center;min-width:44px;">
+          <div class="jmo-history-time">${String(tm).padStart(2,'0')}:${String(ts).padStart(2,'0')}</div>
+          <div class="jmo-history-stat-label">${I18N.stat_duration || 'duration'}</div>
+        </div>
+      </div>`;
+    historyEl.appendChild(totals);
   }
 
   function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }

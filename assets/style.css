@@ -444,7 +444,6 @@
   font-size: .82rem;
   color: var(--jmo-text-dim);
   user-select: none;
-  margin-bottom: 12px;
   font-weight: 400;
 }
 
@@ -541,7 +540,28 @@
   font-size: .8rem;
   gap: 8px;
 }
-.jmo-history-item:last-child { border-bottom: none; }
+.jmo-history-item:last-child { border-bottom: 1px solid var(--jmo-border); }
+
+.jmo-history-totals {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 2px;
+  gap: 8px;
+}
+
+.jmo-history-totals-label {
+  font-size: .62rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--jmo-text-dim);
+}
+
+.jmo-history-totals .jmo-history-count,
+.jmo-history-totals .jmo-history-time {
+  color: var(--jmo-saffron-deep);
+}
 
 .jmo-history-date       { font-family: 'Cormorant Garamond', serif; color: var(--jmo-text-dim); font-size: .82rem; }
 .jmo-history-count,

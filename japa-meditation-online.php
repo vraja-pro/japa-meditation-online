@@ -92,11 +92,12 @@ function mm_get_strings( $lang_base ) {
         'word_hare'        => 'Hare',
         'word_krishna'     => 'Krishna',
         'word_rama'        => 'Rama',
+        'total'            => 'Total',
     ];
 
     $translations = [
         'he' => [
-            'title'            => 'מדיטצית ג׳פה אונליין',
+            'title'            => 'מדיטציית ג׳פַּה אונליין',
             'mantras_label'    => 'מנטרות',
             'end_session'      => 'סיום תרגול',
             'reset'            => 'איפוס',
@@ -134,6 +135,7 @@ function mm_get_strings( $lang_base ) {
             'word_hare'        => 'הַרֵא',
             'word_krishna'     => 'קְרִישְנָה',
             'word_rama'        => 'רָאמַה',
+            'total'            => 'סה"כ',
         ],
     ];
 
@@ -290,7 +292,7 @@ function mm_admin_menu() {
 
 function mm_admin_page() { ?>
     <div class="wrap">
-        <h1>🕉 Mantra Meditation</h1>
+        <h1>Mantra Meditation</h1>
         <p>Use shortcode <code>[mantra_meditation]</code> on any page.</p>
         <p>Session history is stored in each visitor's browser (localStorage).</p>
     </div>
