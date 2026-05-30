@@ -11,7 +11,10 @@
   /* ═══════════════════════════════════════════════════════
      CONFIG
   ═══════════════════════════════════════════════════════ */
-  const TARGET = parseInt(document.getElementById('mm-root')?.dataset.target || 108, 10);
+  const ROOT   = document.getElementById('mm-root');
+  const TARGET = parseInt(ROOT?.dataset.target || 108, 10);
+
+  const I18N   = window.MM_I18N || {};
 
   // Full maha-mantra: Hare Krishna Hare Krishna Krishna Krishna Hare Hare
   //                   Hare Rama    Hare Rama    Rama    Rama    Hare Hare
@@ -186,7 +189,7 @@
   function startVoice() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) {
-      voiceText.textContent = '⚠ Voice recognition not supported in this browser';
+      voiceText.textContent = I18N.no_support || '⚠ Voice recognition not supported in this browser';
       voiceToggle.checked = false;
       voiceEnabled = false;
       return;
@@ -224,7 +227,7 @@
     recognition.onerror = (event) => {
       console.error('[Mantra] Speech error:', event.error);
       if (event.error === 'not-allowed') {
-        voiceText.textContent = '⚠ Microphone access denied';
+        voiceText.textContent = I18N.mic_denied || '⚠ Microphone access denied';
         voiceToggle.checked = false;
         voiceEnabled = false;
       }
@@ -276,15 +279,24 @@
   /* ═══════════════════════════════════════════════════════
      MANTRA DISPLAY
   ═══════════════════════════════════════════════════════ */
+  const W_HARE    = I18N.word_hare    || 'Hare';
+  const W_KRISHNA = I18N.word_krishna || 'Krishna';
+  const W_RAMA    = I18N.word_rama    || 'Rama';
+
   const MANTRA_WORDS = [
-    'Hare', 'Krishna', 'Hare', 'Krishna', 'Krishna', 'Krishna', 'Hare', 'Hare',
-    'Hare', 'Rama',    'Hare', 'Rama',    'Rama',    'Rama',    'Hare', 'Hare',
+    W_HARE, W_KRISHNA, W_HARE, W_KRISHNA, W_KRISHNA, W_KRISHNA, W_HARE, W_HARE,
+    W_HARE, W_RAMA,    W_HARE, W_RAMA,    W_RAMA,    W_RAMA,    W_HARE, W_HARE,
+  ];
+
+  const MANTRA_TYPES = [
+    'hare', 'krishna', 'hare', 'krishna', 'krishna', 'krishna', 'hare', 'hare',
+    'hare', 'rama',    'hare', 'rama',    'rama',    'rama',    'hare', 'hare',
   ];
 
   function initTranscript() {
     transcriptEl.innerHTML = MANTRA_WORDS.map((word, i) => {
       const prefix = i > 0 && i % 4 === 0 ? '<br>' : (i > 0 ? ' ' : '');
-      return `${prefix}<span class="mm-mantra-word mm-word-${word.toLowerCase()}">${word}</span>`;
+      return `${prefix}<span class="mm-mantra-word mm-word-${MANTRA_TYPES[i]}">${word}</span>`;
     }).join('');
     updateMantraHighlight();
   }
@@ -305,20 +317,20 @@
     switch (state) {
       case 'active':
         voiceStatus.classList.add('mm-active');
-        voiceText.textContent = 'Listening…';
+        voiceText.textContent = I18N.listening   || 'Listening…';
         if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'transcribing':
         voiceStatus.classList.add('mm-active');
-        voiceText.textContent = 'Recognising…';
+        voiceText.textContent = I18N.recognising || 'Recognising…';
         if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'detected':
         voiceStatus.classList.add('mm-detecting');
-        voiceText.textContent = '🙏 Mantra counted!';
+        voiceText.textContent = I18N.detected    || '🙏 Mantra counted!';
         break;
       default:
-        voiceText.textContent = 'Voice detection off';
+        voiceText.textContent = I18N.voice_off_status || 'Voice detection off';
     }
   }
 
@@ -492,18 +504,18 @@
       item.className = 'mm-history-item';
       item.innerHTML = `
         <div>
-          <div style="color:var(--mm-text);font-size:.82rem;">Session</div>
+          <div style="color:var(--mm-text);font-size:.82rem;">${I18N.session_label || 'Session'}</div>
           <div class="mm-history-date">${date}</div>
           ${row.notes ? `<div style="font-size:.72rem;color:var(--mm-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
         </div>
         <div style="display:flex;gap:20px;align-items:flex-end;">
           <div style="text-align:center;min-width:40px;">
             <div class="mm-history-count">${row.mantra_count}</div>
-            <div class="mm-history-stat-label">rounds</div>
+            <div class="mm-history-stat-label">${I18N.stat_rounds || 'rounds'}</div>
           </div>
           <div style="text-align:center;min-width:48px;">
             <div class="mm-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
-            <div class="mm-history-stat-label">duration</div>
+            <div class="mm-history-stat-label">${I18N.stat_duration || 'duration'}</div>
           </div>
         </div>`;
       historyEl.appendChild(item);

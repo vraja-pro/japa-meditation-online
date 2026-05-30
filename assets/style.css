@@ -742,6 +742,29 @@
 /* ── Bump animation ────────────────────────────────────── */
 .mm-btn-icon { font-size: .9em; }
 
+/* ── RTL ───────────────────────────────────────────────── */
+#mm-root[dir="rtl"] {
+  direction: rtl;
+}
+
+#mm-root[dir="rtl"] .mm-mode-label {
+  align-self: flex-end;
+}
+
+#mm-root[dir="rtl"] .mm-history-item,
+#mm-root[dir="rtl"] .mm-mode-row {
+  flex-direction: row-reverse;
+}
+
+#mm-root[dir="rtl"] .mm-modal-notes-label {
+  text-align: right;
+}
+
+/* Mantra words stay LTR regardless — they are Sanskrit in Latin script */
+#mm-root[dir="rtl"] .mm-transcript {
+  direction: ltr;
+}
+
 /* ── Responsive ────────────────────────────────────────── */
 @media (max-width: 480px) {
   :root { --mm-ring-size: 180px; }
