@@ -345,7 +345,7 @@
         break;
       case 'detected':
         voiceStatus.classList.add('jmo-detecting');
-        voiceText.textContent = I18N.detected    || '🙏 Mantra counted!';
+        voiceText.textContent = I18N.detected    || 'Mantra counted!';
         break;
       default:
         voiceText.textContent = I18N.voice_off_status || 'Voice detection off';
@@ -355,7 +355,7 @@
   /* ═══════════════════════════════════════════════════════
      PACE MODE
   ═══════════════════════════════════════════════════════ */
-  const PACE_MS = { slow: 600, medium: 500, fast: 370 };
+  const PACE_MS = { slow: 600, medium: 500, fast: 330 };
 
   function startPace() {
     clearInterval(paceInterval);
@@ -470,7 +470,7 @@
   /* ═══════════════════════════════════════════════════════
      MODAL
   ═══════════════════════════════════════════════════════ */
-  saveBtn.addEventListener('click',    () => { saveSession(count, elapsed, notesEl.value.trim()); closeModal(); });
+  saveBtn.addEventListener('click',    () => { saveSession(count, elapsed, notesEl.value.trim()); closeModal(); doReset(); });
   discardBtn.addEventListener('click', () => { closeModal(); doReset(); });
   function closeModal() { modal.classList.remove('jmo-open'); modal.setAttribute('aria-hidden', 'true'); }
 

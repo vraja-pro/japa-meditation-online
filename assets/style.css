@@ -772,3 +772,35 @@
   .jmo-controls { gap: 8px; }
   .jmo-btn { padding: 10px 16px; font-size: .72rem; }
 }
+
+/* ── Wide layout ────────────────────────────────────────── */
+.jmo-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.jmo-main    { flex: 1; }
+.jmo-sidebar { flex: 1; }
+
+@media (min-width: 860px) {
+  #jmo-root {
+    max-width: 960px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+
+  .jmo-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  .jmo-sidebar {
+    flex: 0 0 320px;
+    padding-top: 8px;
+  }
+
+  .jmo-modes {
+    margin-bottom: 16px;
+  }
+}

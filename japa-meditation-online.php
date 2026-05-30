@@ -158,6 +158,9 @@ function mm_shortcode( $atts ) {
             <h1 class="jmo-title"><?php echo esc_html( $s['title'] ); ?></h1>
         </div>
 
+        <div class="jmo-layout">
+        <div class="jmo-main">
+
         <div class="jmo-ring-wrap">
             <svg class="jmo-ring" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
                 <circle class="jmo-ring-bg"       cx="110" cy="110" r="96"/>
@@ -178,6 +181,9 @@ function mm_shortcode( $atts ) {
             </button>
             <button class="jmo-btn jmo-btn-reset" id="jmo-reset-btn">↺ <?php echo esc_html( $s['reset'] ); ?></button>
         </div>
+
+        </div><!-- .jmo-main -->
+        <div class="jmo-sidebar">
 
         <div class="jmo-modes">
 
@@ -225,6 +231,9 @@ function mm_shortcode( $atts ) {
                 <p class="jmo-history-empty"><?php echo esc_html( $s['history_empty'] ); ?></p>
             </div>
         </div>
+
+        </div><!-- .jmo-sidebar -->
+        </div><!-- .jmo-layout -->
 
         <div class="jmo-modal-overlay" id="jmo-modal" aria-hidden="true">
         <div class="jmo-modal">
