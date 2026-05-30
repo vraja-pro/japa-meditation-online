@@ -131,9 +131,9 @@ function mm_get_strings( $lang_base ) {
             'session_label'    => 'שיעור',
             'stat_rounds'      => 'סיבובים',
             'stat_duration'    => 'משך',
-            'word_hare'        => 'הארה',
-            'word_krishna'     => 'קרישנה',
-            'word_rama'        => 'ראמה',
+            'word_hare'        => 'הַרֵא',
+            'word_krishna'     => 'קְרִישְנָה',
+            'word_rama'        => 'רָאמַה',
         ],
     ];
 
@@ -142,7 +142,7 @@ function mm_get_strings( $lang_base ) {
 
 add_shortcode( 'mantra_meditation', 'mm_shortcode' );
 function mm_shortcode( $atts ) {
-    $atts = shortcode_atts( [ 'target' => 108, 'lang' => 'hi-IN' ], $atts, 'mantra_meditation' );
+    $atts = shortcode_atts( [ 'lang' => 'en' ], $atts, 'mantra_meditation' );
 
     $lang      = esc_attr( $atts['lang'] );
     $lang_base = strtolower( explode( '-', $lang )[0] );
@@ -151,7 +151,7 @@ function mm_shortcode( $atts ) {
 
     ob_start(); ?>
     <script>window.JMO_I18N = <?php echo wp_json_encode( $s ); ?>;</script>
-    <div id="jmo-root" data-target="<?php echo esc_attr( $atts['target'] ); ?>" data-lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
+    <div id="jmo-root" data-lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 
         <div class="jmo-header">
             <div class="jmo-om">हरि कृष्ण</div>

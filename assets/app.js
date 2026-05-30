@@ -11,8 +11,7 @@
   /* ═══════════════════════════════════════════════════════
      CONFIG
   ═══════════════════════════════════════════════════════ */
-  const ROOT   = document.getElementById('jmo-root');
-  const TARGET = parseInt(ROOT?.dataset.target || 108, 10);
+  const TARGET = 108; // one full mala
 
   const I18N   = window.JMO_I18N || {};
 
@@ -24,22 +23,41 @@
   const KRISHNA_WORDS = new Set(['krishna', 'krsna', 'krishn', 'cristina', 'cristine']);
 
   // Devanagari → Latin transliteration for common mantra words.
-  // Applied to every transcript before display or counting.
-  const DEVANAGARI_MAP = {
+  // Devanagari → Latin (used for counting — always English/Latin regardless of UI lang).
+  const DEVANAGARI_LATIN = {
     'हरे': 'hare', 'हरि': 'hari', 'हरी': 'hari', 'हर': 'hare', 'हारे': 'hare',
-    'राम': 'rama', 'रामा': 'rama', 'राम': 'rama',
-    'कृष्ण': 'krishna', 'कृष्णा': 'krishna', 'कृष्ण': 'krishna',
+    'राम': 'rama', 'रामा': 'rama',
+    'कृष्ण': 'krishna', 'कृष्णा': 'krishna',
     'हरा': 'hara',
   };
 
-  function devanagariToLatin(text) {
+  // Devanagari → UI language (used for display, built from I18N word translations).
+  const DEVANAGARI_DISPLAY = {
+    'हरे': I18N.word_hare    || 'hare',
+    'हरि': I18N.word_hare    || 'hari',
+    'हरी': I18N.word_hare    || 'hari',
+    'हर':  I18N.word_hare    || 'hare',
+    'हारे': I18N.word_hare   || 'hare',
+    'राम':  I18N.word_rama   || 'rama',
+    'रामा': I18N.word_rama   || 'rama',
+    'कृष्ण':  I18N.word_krishna || 'krishna',
+    'कृष्णा': I18N.word_krishna || 'krishna',
+    'हरा': I18N.word_hare    || 'hara',
+  };
+
+  function mapDevanagari(text, map) {
     return text.normalize('NFC').split(/(\s+)/).map(token => {
       const cleaned = token.replace(/[।॥.,!?;:""'']/g, '').normalize('NFC');
-      if (DEVANAGARI_MAP[cleaned]) return DEVANAGARI_MAP[cleaned];
-      if (/[ऀ-ॿ]/.test(cleaned)) return ''; // strip unmapped Devanagari
+      if (map[cleaned]) return map[cleaned];
+      if (/[ऀ-ॿ]/.test(cleaned)) return '';
       return token;
     }).join('').replace(/\s+/g, ' ').trim();
   }
+
+  // For counting — always Latin.
+  function devanagariToLatin(text)   { return mapDevanagari(text, DEVANAGARI_LATIN); }
+  // For display — UI language.
+  function devanagariToDisplay(text) { return mapDevanagari(text, DEVANAGARI_DISPLAY); }
 
   function clean(w) { return w.toLowerCase().replace(/[.,!?;:।॥]/g, ''); }
 
@@ -215,8 +233,8 @@
         if (event.results[i].isFinal) {
           const raw  = event.results[i][0].transcript.trim();
           console.log('[Mantra] RAW:', raw);
+          console.log('[Mantra] Display:', devanagariToDisplay(raw));
           const text = devanagariToLatin(raw);
-          console.log('[Mantra] After mapping:', text);
           const found = countMantrasWithCarry(text);
           updateMantraHighlight();
           if (found > 0) incrementCount(found);
