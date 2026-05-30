@@ -1,11 +1,9 @@
 /**
  * Mantra Meditation Counter
  *
- * Records mic in 5-second chunks via MediaRecorder.
- * Each chunk → WP AJAX proxy → OpenAI Whisper (auto language detection).
- * Whisper transcribes Sanskrit accurately. We do exact word matching.
- *
- * Open the browser console to see raw Whisper output — useful for tuning.
+ * Uses the browser Web Speech API (Google Speech Recognition) for continuous
+ * real-time transcription. Language: en-US. Add mantra vocabulary via the
+ * JSGF grammar string below. Open the browser console to see raw output.
  */
 (function () {
   'use strict';
@@ -13,22 +11,55 @@
   /* ═══════════════════════════════════════════════════════
      CONFIG
   ═══════════════════════════════════════════════════════ */
-  const TARGET   = parseInt(document.getElementById('mm-root')?.dataset.target || 108, 10);
-  const CHUNK_MS = 5000; // 5-second audio chunks sent to Whisper
+  const TARGET = parseInt(document.getElementById('mm-root')?.dataset.target || 108, 10);
 
-  // Exact words Whisper returns for this mantra.
-  // Auto-detect language lets Whisper choose Sanskrit/Hindi/Latin freely.
-  // Check console logs to see what Whisper actually outputs and add here.
-  const RAMA_WORDS = new Set(['राम', 'rama', 'raam', 'rāma', 'ram']);
-  const HARE_WORDS = new Set(['हरे', 'हरि', 'hare', 'hari', 'hāre']);
+  // Full maha-mantra: Hare Krishna Hare Krishna Krishna Krishna Hare Hare
+  //                   Hare Rama    Hare Rama    Rama    Rama    Hare Hare
+  // 16 words per complete mantra. Add variants from the console logs.
+  const RAMA_WORDS    = new Set(['rama', 'raam', 'rāma', 'ram']);
+  const HARE_WORDS    = new Set(['hare', 'hari', 'hāre', 'harry', 'hurray', 'holly']);
+  const KRISHNA_WORDS = new Set(['krishna', 'krsna', 'krishn', 'cristina', 'cristine']);
 
-  function isMantraWord(w) {
-    const clean = w.toLowerCase().replace(/[।,.!?;:\u0964\u0965]/g, '');
-    return RAMA_WORDS.has(clean) || HARE_WORDS.has(clean);
+  // Devanagari → Latin transliteration for common mantra words.
+  // Applied to every transcript before display or counting.
+  const DEVANAGARI_MAP = {
+    'हरे': 'hare', 'हरि': 'hari', 'हरी': 'hari', 'हर': 'hare', 'हारे': 'hare',
+    'राम': 'rama', 'रामा': 'rama', 'राम': 'rama',
+    'कृष्ण': 'krishna', 'कृष्णा': 'krishna', 'कृष्ण': 'krishna',
+    'हरा': 'hara',
+  };
+
+  function devanagariToLatin(text) {
+    return text.normalize('NFC').split(/(\s+)/).map(token => {
+      const cleaned = token.replace(/[।॥.,!?;:""'']/g, '').normalize('NFC');
+      if (DEVANAGARI_MAP[cleaned]) return DEVANAGARI_MAP[cleaned];
+      if (/[ऀ-ॿ]/.test(cleaned)) return ''; // strip unmapped Devanagari
+      return token;
+    }).join('').replace(/\s+/g, ' ').trim();
   }
 
-  function isRamaWord(w) { return RAMA_WORDS.has(w.toLowerCase().replace(/[।,.!?;:\u0964\u0965]/g, '')); }
-  function isHareWord(w) { return HARE_WORDS.has(w.toLowerCase().replace(/[।,.!?;:\u0964\u0965]/g, '')); }
+  function clean(w) { return w.toLowerCase().replace(/[.,!?;:।॥]/g, ''); }
+
+  function isRamaWord(w)    { return RAMA_WORDS.has(clean(w)); }
+  function isHareWord(w)    { return HARE_WORDS.has(clean(w)); }
+  function isKrishnaWord(w) { return KRISHNA_WORDS.has(clean(w)); }
+
+  // Sorted longest-first so greedy matching picks "krishna" before "krsna" etc.
+  const ALL_MANTRA_WORDS = [...RAMA_WORDS, ...HARE_WORDS, ...KRISHNA_WORDS]
+    .sort((a, b) => b.length - a.length);
+
+  // Splits a merged token like "harekrishna" into ["hare", "krishna"].
+  function extractMantraWords(token) {
+    const s = clean(token);
+    const found = [];
+    let i = 0;
+    while (i < s.length) {
+      const match = ALL_MANTRA_WORDS.find(mw => s.startsWith(mw, i));
+      if (match) { found.push(match); i += match.length; }
+      else        { i++; }
+    }
+    return found;
+  }
 
   /* ═══════════════════════════════════════════════════════
      STATE
@@ -39,10 +70,12 @@
   let elapsed        = 0;
   let timerInterval  = null;
   let voiceEnabled   = false;
-  let mediaRecorder  = null;
-  let audioStream    = null;
-  let chunkTimer     = null;
-  let carryStreak    = 0; // streak carried across chunk boundaries
+  let recognition    = null;
+  let carryStreak    = 0; // streak carried across recognition result boundaries
+  let paceMode          = false;
+  let paceInterval      = null;
+  let inactivityTimeout = null;
+  let paceSpeed      = 'medium';
 
   /* ═══════════════════════════════════════════════════════
      DOM
@@ -53,10 +86,12 @@
   const voiceStatus  = document.getElementById('mm-voice-status');
   const voiceText    = document.getElementById('mm-voice-text');
   const transcriptEl = document.getElementById('mm-transcript');
-  const startBtn     = document.getElementById('mm-start-btn');
   const stopBtn      = document.getElementById('mm-stop-btn');
   const resetBtn     = document.getElementById('mm-reset-btn');
   const voiceToggle  = document.getElementById('mm-voice-toggle');
+  const paceBtnsEl   = document.getElementById('mm-pace-btns');
+  const pacePlayBtn  = document.getElementById('mm-pace-play');
+  const pacePauseBtn = document.getElementById('mm-pace-pause');
   const manualBtn    = document.getElementById('mm-manual-btn');
   const historyEl    = document.getElementById('mm-history');
   const modal        = document.getElementById('mm-modal');
@@ -104,6 +139,16 @@
     progressCirc.style.strokeDashoffset = CIRC * (1 - Math.min(n / TARGET, 1));
   }
 
+  function resetInactivity() {
+    clearTimeout(inactivityTimeout);
+    inactivityTimeout = setTimeout(endSession, 60 * 1000);
+  }
+
+  function clearInactivity() {
+    clearTimeout(inactivityTimeout);
+    inactivityTimeout = null;
+  }
+
   function incrementCount(n) {
     if (!running || n <= 0) return;
     setCount(count + n);
@@ -112,8 +157,11 @@
     countEl.classList.add('mm-bump');
     setTimeout(() => countEl.classList.remove('mm-bump'), 200);
     spawnRipple();
-    setVoiceStatus('detected');
-    setTimeout(() => { if (running && voiceEnabled) setVoiceStatus('active'); }, 1500);
+    resetInactivity();
+    if (voiceEnabled) {
+      setVoiceStatus('detected');
+      setTimeout(() => { if (running && voiceEnabled) setVoiceStatus('active'); }, 1500);
+    }
   }
 
   function spawnRipple() {
@@ -128,107 +176,78 @@
   }
 
   /* ═══════════════════════════════════════════════════════
-     WHISPER PIPELINE
+     GOOGLE SPEECH API PIPELINE
   ═══════════════════════════════════════════════════════ */
 
-  async function startVoice() {
-    if (!MM_DATA.has_api_key) {
-      voiceText.textContent = '⚠ Add OpenAI key in WP Admin → Mantra Meditation';
+  // Add mantra vocabulary hints. Use JSGF format.
+  // The user will extend this list with additional words.
+  const MANTRA_GRAMMAR = '#JSGF V1.0; grammar mantra; public <mantra> = hare | krishna | krsna | rama | hari | ram | hara;';
+
+  function startVoice() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      voiceText.textContent = '⚠ Voice recognition not supported in this browser';
       voiceToggle.checked = false;
       voiceEnabled = false;
       return;
     }
-    try {
-      audioStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-    } catch (e) {
-      voiceText.textContent = '⚠ Microphone access denied';
-      voiceToggle.checked = false;
-      voiceEnabled = false;
-      return;
+
+    recognition = new SR();
+    recognition.lang            = 'hi-IN';
+    recognition.continuous      = true;
+    recognition.interimResults  = false;
+    recognition.maxAlternatives = 1;
+
+    const SGL = window.SpeechGrammarList || window.webkitSpeechGrammarList;
+    if (SGL) {
+      const list = new SGL();
+      list.addFromString(MANTRA_GRAMMAR, 1);
+      recognition.grammars = list;
     }
+
+    recognition.onstart = () => setVoiceStatus('active');
+
+    recognition.onresult = (event) => {
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        if (event.results[i].isFinal) {
+          const raw  = event.results[i][0].transcript.trim();
+          console.log('[Mantra] RAW:', raw);
+          const text = devanagariToLatin(raw);
+          console.log('[Mantra] After mapping:', text);
+          const found = countMantrasWithCarry(text);
+          updateMantraHighlight();
+          if (found > 0) incrementCount(found);
+        }
+      }
+    };
+
+    recognition.onerror = (event) => {
+      console.error('[Mantra] Speech error:', event.error);
+      if (event.error === 'not-allowed') {
+        voiceText.textContent = '⚠ Microphone access denied';
+        voiceToggle.checked = false;
+        voiceEnabled = false;
+      }
+    };
+
+    // Auto-restart after silence or network interruption
+    recognition.onend = () => {
+      if (running && voiceEnabled) {
+        try { recognition.start(); } catch (_) {}
+      }
+    };
+
     carryStreak = 0;
-    recordAndTranscribeLoop();
-    setVoiceStatus('active');
+    try { recognition.start(); } catch (e) { console.error('[Mantra] Recognition start failed:', e); }
   }
 
   function stopVoice() {
-    clearTimeout(chunkTimer);
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-      try { mediaRecorder.stop(); } catch (_) {}
+    if (recognition) {
+      recognition.onend = null; // prevent auto-restart
+      try { recognition.stop(); } catch (_) {}
+      recognition = null;
     }
-    if (audioStream) {
-      audioStream.getTracks().forEach(t => t.stop());
-      audioStream = null;
-    }
-    mediaRecorder = null;
     setVoiceStatus('off');
-  }
-
-  function getSupportedMimeType() {
-    const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
-    return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
-  }
-
-  function recordAndTranscribeLoop() {
-    if (!running || !voiceEnabled || !audioStream) return;
-
-    const chunks   = [];
-    const mimeType = getSupportedMimeType();
-
-    try {
-      mediaRecorder = new MediaRecorder(audioStream, mimeType ? { mimeType } : {});
-    } catch (e) {
-      console.error('[Mantra] MediaRecorder init failed:', e);
-      return;
-    }
-
-    mediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-
-    mediaRecorder.onstop = async () => {
-      if (!running || !voiceEnabled) return;
-      const blob = new Blob(chunks, { type: mimeType || 'audio/webm' });
-      if (blob.size > 1500) { // skip near-silent chunks
-        await transcribeChunk(blob);
-      }
-      if (running && voiceEnabled) recordAndTranscribeLoop(); // next chunk
-    };
-
-    mediaRecorder.start();
-    chunkTimer = setTimeout(() => {
-      if (mediaRecorder && mediaRecorder.state === 'recording') {
-        try { mediaRecorder.stop(); } catch (_) {}
-      }
-    }, CHUNK_MS);
-  }
-
-  async function transcribeChunk(blob) {
-    setVoiceStatus('transcribing');
-    const fd = new FormData();
-    fd.append('action', 'mm_transcribe');
-    fd.append('nonce',  MM_DATA.nonce);
-    fd.append('audio',  blob, 'audio.webm');
-
-    try {
-      const res  = await fetch(MM_DATA.ajax_url, { method: 'POST', body: fd });
-      const json = await res.json();
-
-      if (!json.success) {
-        console.warn('[Mantra] Whisper error:', json.data?.message);
-        showTranscript('⚠ ' + (json.data?.message || 'Recognition error'));
-        return;
-      }
-
-      const text = (json.data.text || '').trim();
-      console.log('[Mantra] Whisper says:', text); // check console to tune word list
-
-      if (text) showTranscript(text);
-
-      const found = countMantrasWithCarry(text);
-      if (found > 0) incrementCount(found);
-
-    } catch (e) {
-      console.error('[Mantra] Network error:', e);
-    }
   }
 
   /**
@@ -241,13 +260,13 @@
     let found  = 0;
     let streak = carryStreak;
 
-    for (const w of words) {
-      if (isMantraWord(w)) {
+    for (const t of words) {
+      let n = extractMantraWords(t).length;
+      while (n-- > 0) {
         streak++;
-        if (streak === 4) { found++; streak = 0; }
-      } else {
-        streak = 0;
+        if (streak === 16) { found++; streak = 0; } // full maha-mantra = 16 words
       }
+      // non-mantra tokens yield no words — noise and mishearings are ignored
     }
 
     carryStreak = streak;
@@ -255,27 +274,26 @@
   }
 
   /* ═══════════════════════════════════════════════════════
-     TRANSCRIPT DISPLAY
+     MANTRA DISPLAY
   ═══════════════════════════════════════════════════════ */
-  function showTranscript(text) {
-    const parts = text.split(/(\s+)/);
-    const html  = parts.map(p => {
-      const clean = p.toLowerCase().replace(/[।,.!?;:\u0964\u0965]/g, '');
-      if (isRamaWord(clean)) {
-        return `<mark style="background:rgba(212,168,67,.35);color:#f0c96a;border-radius:3px;padding:0 3px;font-weight:700;">${escHtml(p)}</mark>`;
-      }
-      if (isHareWord(clean)) {
-        return `<mark style="background:rgba(232,115,42,.3);color:#e8732a;border-radius:3px;padding:0 3px;font-weight:700;">${escHtml(p)}</mark>`;
-      }
-      return escHtml(p);
-    }).join('');
+  const MANTRA_WORDS = [
+    'Hare', 'Krishna', 'Hare', 'Krishna', 'Krishna', 'Krishna', 'Hare', 'Hare',
+    'Hare', 'Rama',    'Hare', 'Rama',    'Rama',    'Rama',    'Hare', 'Hare',
+  ];
 
-    transcriptEl.innerHTML = `"${html}"`;
-    clearTimeout(transcriptEl._t);
-    transcriptEl._t = setTimeout(() => {
-      transcriptEl.innerHTML = '';
-      if (running && voiceEnabled) setVoiceStatus('active');
-    }, CHUNK_MS + 2000);
+  function initTranscript() {
+    transcriptEl.innerHTML = MANTRA_WORDS.map((word, i) => {
+      const prefix = i > 0 && i % 4 === 0 ? '<br>' : (i > 0 ? ' ' : '');
+      return `${prefix}<span class="mm-mantra-word mm-word-${word.toLowerCase()}">${word}</span>`;
+    }).join('');
+    updateMantraHighlight();
+  }
+
+  function updateMantraHighlight() {
+    transcriptEl.querySelectorAll('.mm-mantra-word').forEach((span, i) => {
+      span.classList.toggle('mm-word-lit',  i < carryStreak);
+      span.classList.toggle('mm-word-next', paceMode && running && i === carryStreak);
+    });
   }
 
   /* ═══════════════════════════════════════════════════════
@@ -288,12 +306,12 @@
       case 'active':
         voiceStatus.classList.add('mm-active');
         voiceText.textContent = 'Listening…';
-        if (langBadgeEl) langBadgeEl.textContent = 'Whisper';
+        if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'transcribing':
         voiceStatus.classList.add('mm-active');
         voiceText.textContent = 'Recognising…';
-        if (langBadgeEl) langBadgeEl.textContent = 'Whisper';
+        if (langBadgeEl) langBadgeEl.textContent = 'Google';
         break;
       case 'detected':
         voiceStatus.classList.add('mm-detecting');
@@ -305,52 +323,114 @@
   }
 
   /* ═══════════════════════════════════════════════════════
+     PACE MODE
+  ═══════════════════════════════════════════════════════ */
+  const PACE_MS = { slow: 600, medium: 500, fast: 370 };
+
+  function startPace() {
+    clearInterval(paceInterval);
+    paceInterval = setInterval(() => {
+      if (!running) return;
+      carryStreak++;
+      if (carryStreak === 16) { carryStreak = 0; incrementCount(1); }
+      updateMantraHighlight();
+    }, PACE_MS[paceSpeed]);
+  }
+
+  function stopPace() {
+    clearInterval(paceInterval);
+    paceInterval = null;
+  }
+
+  function setPaceRunning(active) {
+    paceMode = active;
+    pacePlayBtn.disabled  =  active;
+    pacePauseBtn.disabled = !active;
+    if (active) {
+      voiceToggle.checked = false;
+      voiceEnabled = false;
+      stopVoice();
+      startSession();
+      startPace();
+    } else {
+      stopPace();
+    }
+    updateMantraHighlight();
+  }
+
+  pacePlayBtn.addEventListener('click',  () => setPaceRunning(true));
+  pacePauseBtn.addEventListener('click', () => setPaceRunning(false));
+
+  paceBtnsEl.querySelectorAll('.mm-pace-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      paceSpeed = btn.dataset.pace;
+      paceBtnsEl.querySelectorAll('.mm-pace-btn').forEach(b => b.classList.remove('mm-pace-selected'));
+      btn.classList.add('mm-pace-selected');
+      if (paceMode && running) startPace();
+    });
+  });
+
+  /* ═══════════════════════════════════════════════════════
      VOICE TOGGLE
   ═══════════════════════════════════════════════════════ */
   voiceToggle.addEventListener('change', () => {
     voiceEnabled = voiceToggle.checked;
-    if (running) voiceEnabled ? startVoice() : stopVoice();
+    if (voiceEnabled) {
+      paceMode = false;
+      pacePlayBtn.disabled  = false;
+      pacePauseBtn.disabled = true;
+      stopPace();
+      startSession();
+      startVoice();
+    } else {
+      stopVoice();
+    }
   });
 
   /* ═══════════════════════════════════════════════════════
      SESSION CONTROLS
   ═══════════════════════════════════════════════════════ */
-  startBtn.addEventListener('click', () => {
+  function startSession() {
+    if (running) return;
     running = true;
-    startBtn.disabled  = true;
-    stopBtn.disabled   = false;
-    manualBtn.disabled = false;
-    startTimer();
-    if (voiceEnabled) startVoice();
-  });
 
-  stopBtn.addEventListener('click', () => {
+    stopBtn.disabled   = false;
+    startTimer();
+    resetInactivity();
+    if (voiceEnabled) startVoice();
+    if (paceMode)     startPace();
+  }
+
+  function endSession() {
+    if (!running) return;
     running = false;
     stopTimer();
     stopVoice();
-    startBtn.disabled  = false;
+    stopPace();
+    clearInactivity();
+
     stopBtn.disabled   = true;
-    manualBtn.disabled = true;
     modalCount.textContent = count;
     modalTime.textContent  = formatTime(elapsed);
     notesEl.value = '';
     modal.classList.add('mm-open');
     modal.setAttribute('aria-hidden', 'false');
-  });
+  }
+
+  stopBtn.addEventListener('click',  endSession);
 
   resetBtn.addEventListener('click', () => {
-    if (running) { running = false; stopTimer(); stopVoice(); }
+    if (running) { running = false; stopTimer(); stopVoice(); stopPace(); clearInactivity(); }
     elapsed = 0; carryStreak = 0;
     timerEl.textContent = '00:00';
     setCount(0);
-    transcriptEl.innerHTML = '';
-    startBtn.disabled  = false;
+    initTranscript();
+
     stopBtn.disabled   = true;
-    manualBtn.disabled = true;
     setVoiceStatus('off');
   });
 
-  manualBtn.addEventListener('click', () => incrementCount(1));
+  manualBtn.addEventListener('click', () => { startSession(); incrementCount(1); });
 
   /* ═══════════════════════════════════════════════════════
      KEYBOARD  ↑/Space = +1    ↓ = -1
@@ -422,6 +502,7 @@
      INIT
   ═══════════════════════════════════════════════════════ */
   setCount(0);
+  initTranscript();
   loadHistory();
 
 })();
