@@ -47,12 +47,6 @@ function mm_enqueue() {
 
     wp_enqueue_style(  'mm-style', MM_PLUGIN_URL . 'assets/style.css', [], time() );
     wp_enqueue_script( 'mm-app',   MM_PLUGIN_URL . 'assets/app.js',   [], time(), true );
-
-    wp_localize_script( 'mm-app', 'MM_DATA', [
-        'ajax_url' => admin_url( 'admin-ajax.php' ),
-        'nonce'    => wp_create_nonce( 'mm_nonce' ),
-        'user_id'  => get_current_user_id(),
-    ]);
 }
 
 /* ──────────────────────────────────────────────
@@ -156,75 +150,21 @@ function mm_shortcode( $atts ) {
 }
 
 /* ──────────────────────────────────────────────
-   4. AJAX – SAVE SESSION
+   AUTH UI  (shown to logged-out visitors)
    ────────────────────────────────────────────── */
-add_action( 'wp_ajax_mm_save_session',        'mm_save_session' );
-add_action( 'wp_ajax_nopriv_mm_save_session', 'mm_save_session' );
-function mm_save_session() {
-    check_ajax_referer( 'mm_nonce', 'nonce' );
-    global $wpdb;
-    $wpdb->insert( $wpdb->prefix . 'mantra_sessions', [
-        'user_id'      => absint( $_POST['user_id'] ?? 0 ),
-        'session_date' => current_time( 'mysql' ),
-        'duration_sec' => absint( $_POST['duration'] ?? 0 ),
-        'mantra_count' => absint( $_POST['count']    ?? 0 ),
-        'notes'        => sanitize_textarea_field( $_POST['notes'] ?? '' ),
-    ], [ '%d', '%s', '%d', '%d', '%s' ] );
-    wp_send_json_success( [ 'id' => $wpdb->insert_id ] );
-}
-
 /* ──────────────────────────────────────────────
-   6. AJAX – LOAD HISTORY
-   ────────────────────────────────────────────── */
-add_action( 'wp_ajax_mm_get_history',        'mm_get_history' );
-add_action( 'wp_ajax_nopriv_mm_get_history', 'mm_get_history' );
-function mm_get_history() {
-    check_ajax_referer( 'mm_nonce', 'nonce' );
-    global $wpdb;
-    $rows = $wpdb->get_results( $wpdb->prepare(
-        "SELECT * FROM {$wpdb->prefix}mantra_sessions WHERE user_id = %d ORDER BY session_date DESC LIMIT 10",
-        absint( $_POST['user_id'] ?? 0 )
-    ), ARRAY_A );
-    wp_send_json_success( $rows );
-}
-
-/* ──────────────────────────────────────────────
-   7. ADMIN – Settings page
+   4. ADMIN – Settings page
    ────────────────────────────────────────────── */
 add_action( 'admin_menu', 'mm_admin_menu' );
 function mm_admin_menu() {
     add_menu_page( 'Mantra Meditation', 'Mantra Meditation', 'manage_options', 'mantra-meditation', 'mm_admin_page', 'dashicons-heart', 30 );
 }
 
-function mm_admin_page() {
-    global $wpdb;
-    $rows = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}mantra_sessions ORDER BY session_date DESC LIMIT 50", ARRAY_A );
-    ?>
+function mm_admin_page() { ?>
     <div class="wrap">
         <h1>🕉 Mantra Meditation</h1>
-
-        <h2>Session History</h2>
         <p>Use shortcode <code>[mantra_meditation]</code> on any page.</p>
-        <table class="wp-list-table widefat fixed striped">
-            <thead><tr><th>ID</th><th>User</th><th>Date</th><th>Duration</th><th>Mantras</th><th>Notes</th></tr></thead>
-            <tbody>
-            <?php if ( empty( $rows ) ) : ?>
-                <tr><td colspan="6">No sessions yet.</td></tr>
-            <?php else : foreach ( $rows as $r ) :
-                $user = $r['user_id'] ? get_userdata( $r['user_id'] ) : false;
-                $m = floor( $r['duration_sec'] / 60 ); $s = $r['duration_sec'] % 60;
-            ?>
-                <tr>
-                    <td><?php echo esc_html( $r['id'] ); ?></td>
-                    <td><?php echo $user ? esc_html( $user->user_login ) : 'Guest'; ?></td>
-                    <td><?php echo esc_html( $r['session_date'] ); ?></td>
-                    <td><?php printf( '%d:%02d', $m, $s ); ?></td>
-                    <td><?php echo esc_html( $r['mantra_count'] ); ?></td>
-                    <td><?php echo esc_html( $r['notes'] ); ?></td>
-                </tr>
-            <?php endforeach; endif; ?>
-            </tbody>
-        </table>
+        <p>Session history is stored in each visitor's browser (localStorage).</p>
     </div>
     <?php
 }

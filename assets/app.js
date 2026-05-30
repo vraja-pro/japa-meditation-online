@@ -452,27 +452,32 @@
   /* ═══════════════════════════════════════════════════════
      AJAX
   ═══════════════════════════════════════════════════════ */
+  const STORAGE_KEY = 'mm_sessions';
+  const ONE_DAY_MS  = 24 * 60 * 60 * 1000;
+
+  function unexpiredSessions() {
+    const cutoff   = Date.now() - ONE_DAY_MS;
+    const sessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+      .filter(s => new Date(s.session_date).getTime() > cutoff);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    return sessions;
+  }
+
   function saveSession(mantraCount, durationSec, notes) {
-    const fd = new FormData();
-    fd.append('action',   'mm_save_session');
-    fd.append('nonce',    MM_DATA.nonce);
-    fd.append('user_id',  MM_DATA.user_id);
-    fd.append('count',    mantraCount);
-    fd.append('duration', durationSec);
-    fd.append('notes',    notes);
-    fetch(MM_DATA.ajax_url, { method: 'POST', body: fd })
-      .then(r => r.json()).then(resp => { if (resp.success) loadHistory(); }).catch(console.error);
+    const sessions = unexpiredSessions();
+    sessions.unshift({
+      session_date: new Date().toISOString(),
+      duration_sec: durationSec,
+      mantra_count: mantraCount,
+      notes:        notes,
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions.slice(0, 10)));
+    loadHistory();
   }
 
   function loadHistory() {
-    const fd = new FormData();
-    fd.append('action',  'mm_get_history');
-    fd.append('nonce',   MM_DATA.nonce);
-    fd.append('user_id', MM_DATA.user_id);
-    fetch(MM_DATA.ajax_url, { method: 'POST', body: fd })
-      .then(r => r.json())
-      .then(resp => { if (resp.success && resp.data.length) renderHistory(resp.data); })
-      .catch(console.error);
+    const sessions = unexpiredSessions();
+    if (sessions.length) renderHistory(sessions);
   }
 
   function renderHistory(rows) {
