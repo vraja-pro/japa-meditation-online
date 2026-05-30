@@ -773,19 +773,6 @@
   font-family: 'Heebo', sans-serif;
 }
 
-#jmo-root[dir="rtl"] .jmo-title,
-#jmo-root[dir="rtl"] .jmo-om,
-#jmo-root[dir="rtl"] .jmo-count,
-#jmo-root[dir="rtl"] .jmo-timer,
-#jmo-root[dir="rtl"] .jmo-history-title,
-#jmo-root[dir="rtl"] .jmo-history-count,
-#jmo-root[dir="rtl"] .jmo-history-time,
-#jmo-root[dir="rtl"] .jmo-modal-title,
-#jmo-root[dir="rtl"] .jmo-modal-om,
-#jmo-root[dir="rtl"] .jmo-modal-num,
-#jmo-root[dir="rtl"] .jmo-mantra-word {
-}
-
 #jmo-root[dir="rtl"] .jmo-mode-label {
   width: 100%;
   text-align: right;
