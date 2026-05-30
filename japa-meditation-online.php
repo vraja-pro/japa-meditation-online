@@ -169,6 +169,10 @@ function mm_shortcode( $atts ) {
             <div class="jmo-ring-inner">
                 <div class="jmo-count" id="jmo-count">0</div>
                 <div class="jmo-count-label"><?php echo esc_html( $s['mantras_label'] ); ?></div>
+                <div class="jmo-rounds-display">
+                    <span id="jmo-rounds">0</span>
+                    <span class="jmo-rounds-label"><?php echo esc_html( $s['stat_rounds'] ); ?></span>
+                </div>
                 <div class="jmo-timer" id="jmo-timer">00:00</div>
             </div>
         </div>
@@ -245,7 +249,12 @@ function mm_shortcode( $atts ) {
             <div class="jmo-modal-stats">
                 <div class="jmo-modal-stat">
                     <span class="jmo-modal-num" id="jmo-modal-count">0</span>
-                    <span class="jmo-modal-lbl"><?php echo esc_html( $s['rounds'] ); ?></span>
+                    <span class="jmo-modal-lbl"><?php echo esc_html( $s['mantras_label'] ); ?></span>
+                </div>
+                <div class="jmo-modal-stat-divider"></div>
+                <div class="jmo-modal-stat">
+                    <span class="jmo-modal-num" id="jmo-modal-rounds">0</span>
+                    <span class="jmo-modal-lbl"><?php echo esc_html( $s['stat_rounds'] ); ?></span>
                 </div>
                 <div class="jmo-modal-stat-divider"></div>
                 <div class="jmo-modal-stat">

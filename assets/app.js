@@ -115,8 +115,10 @@
   const pacePauseBtn = document.getElementById('jmo-pace-pause');
   const manualBtn    = document.getElementById('jmo-manual-btn');
   const historyEl    = document.getElementById('jmo-history');
+  const roundsEl     = document.getElementById('jmo-rounds');
   const modal        = document.getElementById('jmo-modal');
   const modalCount   = document.getElementById('jmo-modal-count');
+  const modalRounds  = document.getElementById('jmo-modal-rounds');
   const modalTime    = document.getElementById('jmo-modal-time');
   const notesEl      = document.getElementById('jmo-notes');
   const saveBtn      = document.getElementById('jmo-save-btn');
@@ -156,8 +158,10 @@
 
   function setCount(n) {
     count = n;
-    countEl.textContent = n;
-    progressCirc.style.strokeDashoffset = CIRC * (1 - Math.min(n / TARGET, 1));
+    const mantrasInRound = n % TARGET;
+    countEl.textContent = mantrasInRound;
+    roundsEl.textContent = Math.floor(n / TARGET);
+    progressCirc.style.strokeDashoffset = CIRC * (1 - mantrasInRound / TARGET);
   }
 
   function resetInactivity() {
@@ -355,7 +359,7 @@
   /* ═══════════════════════════════════════════════════════
      PACE MODE
   ═══════════════════════════════════════════════════════ */
-  const PACE_MS = { slow: 600, medium: 500, fast: 330 };
+  const PACE_MS = { slow: 600, medium: 500, fast: 300 };
 
   function startPace() {
     clearInterval(paceInterval);
@@ -440,8 +444,9 @@
     clearInactivity();
 
     stopBtn.disabled   = true;
-    modalCount.textContent = count;
-    modalTime.textContent  = formatTime(elapsed);
+    modalCount.textContent  = count;
+    modalRounds.textContent = Math.floor(count / TARGET);
+    modalTime.textContent   = formatTime(elapsed);
     notesEl.value = '';
     modal.classList.add('jmo-open');
     modal.setAttribute('aria-hidden', 'false');
@@ -502,6 +507,7 @@
       session_date: new Date().toISOString(),
       duration_sec: durationSec,
       mantra_count: mantraCount,
+      rounds:       Math.floor(mantraCount / TARGET),
       notes:        notes,
     });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions.slice(0, 10)));
@@ -527,12 +533,16 @@
           <div class="jmo-history-date">${date}</div>
           ${row.notes ? `<div style="font-size:.72rem;color:var(--jmo-text-dim);font-style:italic;">${escHtml(row.notes)}</div>` : ''}
         </div>
-        <div style="display:flex;gap:20px;align-items:flex-end;">
-          <div style="text-align:center;min-width:40px;">
+        <div style="display:flex;gap:16px;align-items:flex-end;">
+          <div style="text-align:center;min-width:36px;">
             <div class="jmo-history-count">${row.mantra_count}</div>
+            <div class="jmo-history-stat-label">${I18N.mantras_label || 'mantras'}</div>
+          </div>
+          <div style="text-align:center;min-width:36px;">
+            <div class="jmo-history-count">${row.rounds ?? Math.floor(row.mantra_count / 108)}</div>
             <div class="jmo-history-stat-label">${I18N.stat_rounds || 'rounds'}</div>
           </div>
-          <div style="text-align:center;min-width:48px;">
+          <div style="text-align:center;min-width:44px;">
             <div class="jmo-history-time">${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}</div>
             <div class="jmo-history-stat-label">${I18N.stat_duration || 'duration'}</div>
           </div>

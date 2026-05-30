@@ -157,6 +157,28 @@
   font-weight: 500;
 }
 
+.jmo-rounds-display {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+#jmo-rounds {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--jmo-amber);
+}
+
+.jmo-rounds-label {
+  font-size: .55rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--jmo-text-dim);
+  font-weight: 500;
+}
+
 .jmo-timer {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.05rem;
