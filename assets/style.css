@@ -495,7 +495,7 @@
   background: var(--jmo-surface);
   border-radius: var(--jmo-radius);
   padding: 20px;
-  text-align: left;
+  text-align: start;
   border: 1px solid var(--jmo-border);
   margin: 10px 0 8px;
   box-shadow: var(--jmo-shadow);
@@ -748,11 +748,13 @@
 }
 
 #jmo-root[dir="rtl"] .jmo-mode-label {
-  align-self: flex-end;
+  width: 100%;
+  text-align: right;
+  align-self: stretch;
 }
 
-#jmo-root[dir="rtl"] .jmo-history-item,
-#jmo-root[dir="rtl"] .jmo-mode-row {
+#jmo-root[dir="rtl"] .jmo-voice-status,
+#jmo-root[dir="rtl"] .jmo-toggle-wrap {
   flex-direction: row-reverse;
 }
 

@@ -83,7 +83,7 @@ function mm_get_strings( $lang_base ) {
         'voice_off_status' => 'Voice detection off',
         'listening'        => 'Listening…',
         'recognising'      => 'Recognising…',
-        'detected'         => '🙏 Mantra counted!',
+        'detected'         => 'Mantra counted!',
         'no_support'       => '⚠ Voice recognition not supported in this browser',
         'mic_denied'       => '⚠ Microphone access denied',
         'session_label'    => 'Session',
@@ -96,7 +96,7 @@ function mm_get_strings( $lang_base ) {
 
     $translations = [
         'he' => [
-            'title'            => 'ג\'אפה מדיטציה',
+            'title'            => 'מדיטצית ג׳פה אונליין',
             'mantras_label'    => 'מנטרות',
             'end_session'      => 'סיום שיעור',
             'reset'            => 'איפוס',
@@ -125,7 +125,7 @@ function mm_get_strings( $lang_base ) {
             'voice_off_status' => 'זיהוי קול כבוי',
             'listening'        => 'מאזין…',
             'recognising'      => 'מזהה…',
-            'detected'         => '🙏 מנטרה נספרה!',
+            'detected'         => 'מנטרה נספרה!',
             'no_support'       => '⚠ זיהוי קול אינו נתמך בדפדפן זה',
             'mic_denied'       => '⚠ גישה למיקרופון נדחתה',
             'session_label'    => 'שיעור',
