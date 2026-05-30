@@ -84,33 +84,44 @@ function mm_shortcode( $atts ) {
             </button>
             <button class="mm-btn mm-btn-reset"     id="mm-reset-btn">↺ Reset</button>
         </div>
-		 <button class="mm-manual-btn" id="mm-manual-btn">
-            + Count Mantras manually &nbsp;<span class="mm-kbd">↑</span><span class="mm-or"> or </span><span class="mm-kbd">Space</span>
-        </button>
+        <div class="mm-modes">
 
-		<div class="mm-voice-status" id="mm-voice-status">
-            <div class="mm-pulse" id="mm-pulse"></div>
-            <span id="mm-voice-text">Voice detection off</span>
-            <span id="mm-lang-badge" class="mm-lang-badge"></span>
-        </div>
-
-        <label class="mm-toggle-wrap">
-            <input type="checkbox" id="mm-voice-toggle" />
-            <span class="mm-toggle-slider"></span>
-            <span class="mm-toggle-label">🎙 Auto-detect mantras (Google Voice)</span>
-        </label>
-
-        <div class="mm-pace-wrap">
-            <span class="mm-pace-label">🥁 Pace mode - automatically count mantras</span>
-            <div class="mm-pace-btns" id="mm-pace-btns">
-                <button class="mm-pace-btn" data-pace="slow">Slow</button>
-                <button class="mm-pace-btn mm-pace-selected" data-pace="medium">Medium</button>
-                <button class="mm-pace-btn" data-pace="fast">Fast</button>
+            <div class="mm-mode">
+                <span class="mm-mode-label">Manual</span>
+                <button class="mm-btn mm-btn-primary mm-manual-btn" id="mm-manual-btn">
+                    + Count Mantra &nbsp;<span class="mm-kbd">↑</span><span class="mm-or"> or </span><span class="mm-kbd">Space</span>
+                </button>
             </div>
-            <div class="mm-pace-controls">
-                <button class="mm-btn mm-btn-primary mm-pace-play" id="mm-pace-play">▶ Play</button>
-                <button class="mm-btn mm-btn-secondary mm-pace-pause" id="mm-pace-pause" disabled>⏸ Pause</button>
+
+            <div class="mm-mode">
+                <span class="mm-mode-label">Auto Detection</span>
+                <div class="mm-mode-row">
+                    <label class="mm-toggle-wrap">
+                        <input type="checkbox" id="mm-voice-toggle" />
+                        <span class="mm-toggle-slider"></span>
+                        <span class="mm-toggle-label">Enable Google Voice</span>
+                    </label>
+                    <div class="mm-voice-status" id="mm-voice-status">
+                        <div class="mm-pulse" id="mm-pulse"></div>
+                        <span id="mm-voice-text">Off</span>
+                        <span id="mm-lang-badge" class="mm-lang-badge"></span>
+                    </div>
+                </div>
             </div>
+
+            <div class="mm-mode">
+                <span class="mm-mode-label">Guided Chanting</span>
+                <div class="mm-pace-btns" id="mm-pace-btns">
+                    <button class="mm-pace-btn" data-pace="slow">Slow</button>
+                    <button class="mm-pace-btn mm-pace-selected" data-pace="medium">Medium</button>
+                    <button class="mm-pace-btn" data-pace="fast">Fast</button>
+                </div>
+                <div class="mm-pace-controls">
+                    <button class="mm-btn mm-btn-primary mm-pace-play" id="mm-pace-play">▶ Play</button>
+                    <button class="mm-btn mm-btn-secondary mm-pace-pause" id="mm-pace-pause" disabled>⏸ Pause</button>
+                </div>
+            </div>
+
         </div>
 
        
