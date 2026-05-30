@@ -421,13 +421,8 @@
 
   resetBtn.addEventListener('click', () => {
     if (running) { running = false; stopTimer(); stopVoice(); stopPace(); clearInactivity(); }
-    elapsed = 0; carryStreak = 0;
-    timerEl.textContent = '00:00';
-    setCount(0);
-    initTranscript();
-
-    stopBtn.disabled   = true;
-    setVoiceStatus('off');
+    stopBtn.disabled = true;
+    doReset();
   });
 
   manualBtn.addEventListener('click', () => { startSession(); incrementCount(1); });
@@ -446,8 +441,16 @@
      MODAL
   ═══════════════════════════════════════════════════════ */
   saveBtn.addEventListener('click',    () => { saveSession(count, elapsed, notesEl.value.trim()); closeModal(); });
-  discardBtn.addEventListener('click', closeModal);
+  discardBtn.addEventListener('click', () => { closeModal(); doReset(); });
   function closeModal() { modal.classList.remove('mm-open'); modal.setAttribute('aria-hidden', 'true'); }
+
+  function doReset() {
+    elapsed = 0; carryStreak = 0;
+    timerEl.textContent = '00:00';
+    setCount(0);
+    initTranscript();
+    setVoiceStatus('off');
+  }
 
   /* ═══════════════════════════════════════════════════════
      AJAX
