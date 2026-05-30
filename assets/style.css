@@ -3,7 +3,7 @@
    Aesthetic: Warm Saffron & Cream · Temple sunrise · Earthy
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&family=Frank+Ruhl+Libre:wght@400;500;600;700&family=Heebo:wght@300;400;500;600&display=swap');
 
 /* ── Variables ─────────────────────────────────────────── */
 :root {
@@ -63,7 +63,6 @@
 .jmo-header { padding: 40px 0 16px; }
 
 .jmo-om {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 2.4rem;
   font-weight: 600;
   color: var(--jmo-saffron);
@@ -78,7 +77,6 @@
 }
 
 .jmo-title {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 1.55rem;
   font-weight: 600;
   letter-spacing: .08em;
@@ -245,7 +243,6 @@
 }
 
 .jmo-mantra-word {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 20px;
   font-weight: 600;
   letter-spacing: .1em;
@@ -302,7 +299,6 @@
 }
 
 .jmo-mode-label {
-  font-family: 'Jost', sans-serif;
   font-size: .62rem;
   font-weight: 600;
   letter-spacing: .14em;
@@ -348,7 +344,6 @@
   border-radius: 7px;
   padding: 5px 16px;
   font-size: .7rem;
-  font-family: 'Jost', sans-serif;
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -376,7 +371,6 @@
 }
 
 .jmo-btn {
-  font-family: 'Jost', sans-serif;
   font-size: .78rem;
   font-weight: 600;
   letter-spacing: .08em;
@@ -472,7 +466,6 @@
 
 .jmo-kbd {
   display: inline-block;
-  font-family: 'Jost', sans-serif;
   font-size: .66rem;
   font-weight: 500;
   background: var(--jmo-surface2);
@@ -502,7 +495,6 @@
 }
 
 .jmo-history-title {
-  font-family: 'Cormorant Garamond', serif;
   font-size: .9rem;
   font-weight: 600;
   letter-spacing: .14em;
@@ -529,7 +521,7 @@
 }
 .jmo-history-item:last-child { border-bottom: none; }
 
-.jmo-history-date       { color: var(--jmo-text-dim); font-size: .72rem; }
+.jmo-history-date       { font-family: 'Cormorant Garamond', serif; color: var(--jmo-text-dim); font-size: .82rem; }
 .jmo-history-count,
 .jmo-history-time       {
   font-family: 'Cormorant Garamond', serif;
@@ -540,7 +532,6 @@
 .jmo-history-count      { color: var(--jmo-saffron-deep); }
 .jmo-history-time       { color: var(--jmo-terra); }
 .jmo-history-stat-label {
-  font-family: 'Jost', sans-serif;
   font-size: .58rem;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -594,7 +585,6 @@
 }
 
 .jmo-modal-om {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 2.6rem;
   font-weight: 600;
   color: rgba(255,255,255,.9);
@@ -604,7 +594,6 @@
 }
 
 .jmo-modal-title {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: #fff;
@@ -614,7 +603,6 @@
 }
 
 .jmo-modal-subtitle {
-  font-family: 'Jost', sans-serif;
   font-size: .72rem;
   letter-spacing: .24em;
   text-transform: uppercase;
@@ -648,7 +636,6 @@
 }
 
 .jmo-modal-num {
-  font-family: 'Cormorant Garamond', serif;
   font-size: 2.6rem;
   font-weight: 700;
   color: var(--jmo-saffron-deep);
@@ -656,7 +643,6 @@
 }
 
 .jmo-modal-lbl {
-  font-family: 'Jost', sans-serif;
   font-size: .62rem;
   letter-spacing: .16em;
   color: var(--jmo-text-dim);
@@ -672,7 +658,6 @@
 
 .jmo-modal-notes-label {
   display: block;
-  font-family: 'Jost', sans-serif;
   font-size: .72rem;
   font-weight: 600;
   letter-spacing: .08em;
@@ -693,7 +678,6 @@
   border: 1px solid var(--jmo-border);
   border-radius: 12px;
   color: var(--jmo-text);
-  font-family: 'Jost', sans-serif;
   font-size: .85rem;
   padding: 10px 14px;
   resize: none;
@@ -718,7 +702,6 @@
   font-size: .76rem;
   letter-spacing: .06em;
   cursor: pointer;
-  font-family: 'Jost', sans-serif;
   font-weight: 500;
   padding: 8px;
   transition: color .2s;
@@ -745,6 +728,20 @@
 /* ── RTL ───────────────────────────────────────────────── */
 #jmo-root[dir="rtl"] {
   direction: rtl;
+  font-family: 'Heebo', sans-serif;
+}
+
+#jmo-root[dir="rtl"] .jmo-title,
+#jmo-root[dir="rtl"] .jmo-om,
+#jmo-root[dir="rtl"] .jmo-count,
+#jmo-root[dir="rtl"] .jmo-timer,
+#jmo-root[dir="rtl"] .jmo-history-title,
+#jmo-root[dir="rtl"] .jmo-history-count,
+#jmo-root[dir="rtl"] .jmo-history-time,
+#jmo-root[dir="rtl"] .jmo-modal-title,
+#jmo-root[dir="rtl"] .jmo-modal-om,
+#jmo-root[dir="rtl"] .jmo-modal-num,
+#jmo-root[dir="rtl"] .jmo-mantra-word {
 }
 
 #jmo-root[dir="rtl"] .jmo-mode-label {

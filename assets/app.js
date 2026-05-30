@@ -517,7 +517,8 @@
     historyEl.innerHTML = '';
     rows.forEach(row => {
       const m = Math.floor(row.duration_sec / 60), s = row.duration_sec % 60;
-      const date = new Date(row.session_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      const d = new Date(row.session_date);
+      const date = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
       const item = document.createElement('div');
       item.className = 'jmo-history-item';
       item.innerHTML = `
