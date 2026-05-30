@@ -156,7 +156,6 @@ function mm_shortcode( $atts ) {
     <div id="jmo-root" data-lang="<?php echo $lang; ?>" dir="<?php echo $dir; ?>">
 
         <div class="jmo-header">
-            <div class="jmo-om">हरि कृष्ण</div>
             <h1 class="jmo-title"><?php echo esc_html( $s['title'] ); ?></h1>
         </div>
 
