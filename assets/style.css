@@ -20,6 +20,7 @@
   --jmo-text:         #2a1305;
   --jmo-text-dim:     #6b4220;
   --jmo-border:       #d9bfa0;
+  --jmo-font-num:     'Cormorant Garamond', serif;
   --jmo-ring-size:    220px;
   --jmo-radius:       18px;
   --jmo-transition:   0.28s ease;
@@ -683,6 +684,7 @@
 }
 
 .jmo-modal-num {
+  font-family: var(--jmo-font-num);
   font-size: 2.6rem;
   font-weight: 700;
   color: var(--jmo-saffron-deep);
