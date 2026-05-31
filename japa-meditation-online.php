@@ -195,7 +195,7 @@ function mm_shortcode( $atts ) {
             <div class="jmo-mode">
                 <span class="jmo-mode-label"><?php echo esc_html( $s['mode_manual'] ); ?></span>
                 <button class="jmo-btn jmo-btn-primary jmo-manual-btn" id="jmo-manual-btn">
-                    <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> or </span><span class="jmo-kbd">Space</span>
+                    <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> / </span><span class="jmo-kbd">Space</span>
                 </button>
             </div>
 
