@@ -324,6 +324,7 @@
   }
 
   function updateMantraHighlight() {
+    transcriptEl.classList.toggle('jmo-mode-active', paceMode);
     transcriptEl.querySelectorAll('.jmo-mantra-word').forEach((span, i) => {
       span.classList.toggle('jmo-word-lit',  i < carryStreak);
       span.classList.toggle('jmo-word-next', paceMode && running && i === carryStreak);

@@ -269,8 +269,13 @@
   font-weight: 600;
   letter-spacing: .1em;
   color: var(--jmo-text-dim);
-  opacity: .6;
+  opacity: 1;
   transition: color .22s, opacity .22s, text-shadow .22s;
+}
+
+/* Dim only unlit/unnext words when a mode is active — lit/next words are excluded by :not() */
+.jmo-transcript.jmo-mode-active .jmo-mantra-word:not(.jmo-word-lit):not(.jmo-word-next) {
+  opacity: .6;
 }
 
 .jmo-mantra-sep {
