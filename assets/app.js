@@ -491,12 +491,16 @@
      AJAX
   ═══════════════════════════════════════════════════════ */
   const STORAGE_KEY = 'mm_sessions';
-  const ONE_DAY_MS  = 24 * 60 * 60 * 1000;
+
+  function todayStr() {
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
 
   function unexpiredSessions() {
-    const cutoff   = Date.now() - ONE_DAY_MS;
+    const today    = todayStr();
     const sessions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-      .filter(s => new Date(s.session_date).getTime() > cutoff);
+      .filter(s => { const d = new Date(s.session_date); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` === today; });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     return sessions;
   }
