@@ -12,7 +12,7 @@ A focused Hare Krishna maha-mantra tracker with real-time voice recognition, gui
 - **Progress ring** — Animated SVG ring tracks progress toward 108 rounds (one full mala).
 - **Session timer** — Elapsed time shown in MM:SS.
 - **Session modal** — Review rounds and duration, add notes, then save or discard.
-- **Session history** — Last 10 sessions stored in the browser. Expires after 24 hours. No database or login required.
+- **Session history** — Last 10 sessions stored in the browser. Sessions from previous calendar days are cleared on next load. No database or login required.
 - **Multilingual** — All UI labels and mantra words translate via the `lang` shortcode attribute. Hebrew included (RTL layout applied automatically).
 - **Auto-end** — Session ends automatically after 1 minute of inactivity.
 
@@ -68,7 +68,7 @@ One **round** = 16 consecutive mantra words detected. The word position is carri
 
 - Stored in **localStorage** — no server, no account required.
 - Limited to the **last 10 sessions**.
-- Each session expires after **24 hours**.
+- Sessions from **previous calendar days** are cleared on the next page load — history resets at midnight.
 - Cleared on browser data reset.
 
 ---
