@@ -3,7 +3,7 @@
  * Plugin Name: Japa Meditation Online
  * Plugin URI:  https://example.com/japa-meditation-online
  * Description: Japa meditation tracker with voice detection. Accurately recognises Hare Krishna mantra in real time.
- * Version:     2.0.0
+ * Version:     2.1.0
  * Author:      Vraja Das
  * License:     GPL-2.0+
  * Text Domain: japa-online
