@@ -98,12 +98,14 @@
   let inactivityTimeout = null;
   let modalInactivityTimeout = null;
   let endedByInactivity = false;
+  let lockTapMode = false;
   let paceSpeed      = 'medium';
 
   /* ═══════════════════════════════════════════════════════
      DOM
   ═══════════════════════════════════════════════════════ */
   const countEl      = document.getElementById('jmo-count');
+  const rootEl       = document.getElementById('jmo-root');
   const timerEl      = document.getElementById('jmo-timer');
   const progressCirc = document.getElementById('jmo-progress-circle');
   const voiceStatus  = document.getElementById('jmo-voice-status');
@@ -116,6 +118,7 @@
   const pacePlayBtn  = document.getElementById('jmo-pace-play');
   const pacePauseBtn = document.getElementById('jmo-pace-pause');
   const manualBtn    = document.getElementById('jmo-manual-btn');
+  const lockToggleBtn = document.getElementById('jmo-lock-toggle');
   const historyEl    = document.getElementById('jmo-history');
   const roundsEl     = document.getElementById('jmo-rounds');
   const modal        = document.getElementById('jmo-modal');
@@ -204,6 +207,18 @@
     if (voiceEnabled) {
       setVoiceStatus('detected');
       setTimeout(() => { if (running && voiceEnabled) setVoiceStatus('active'); }, 1500);
+    }
+  }
+
+  function setLockTapMode(enabled) {
+    lockTapMode = enabled;
+    if (rootEl) rootEl.classList.toggle('jmo-lock-tap-on', enabled);
+    if (lockToggleBtn) {
+      lockToggleBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+      lockToggleBtn.classList.toggle('jmo-lock-btn-on', enabled);
+      lockToggleBtn.textContent = enabled
+        ? (I18N.unlock_tap || 'Unlock Tap')
+        : (I18N.lock_tap || 'Lock Tap');
     }
   }
 
@@ -483,6 +498,23 @@
   });
 
   manualBtn.addEventListener('click', () => { startSession(); incrementCount(1); });
+
+  if (lockToggleBtn) {
+    lockToggleBtn.addEventListener('click', () => {
+      setLockTapMode(!lockTapMode);
+    });
+  }
+
+  if (rootEl) {
+    rootEl.addEventListener('click', event => {
+      if (!lockTapMode) return;
+      if (modal.classList.contains('jmo-open')) return;
+      if (lockToggleBtn && lockToggleBtn.contains(event.target)) return;
+      if (manualBtn && manualBtn.contains(event.target)) return;
+      startSession();
+      incrementCount(1);
+    });
+  }
 
   /* ═══════════════════════════════════════════════════════
      KEYBOARD  ↑/Space = +1    ↓ = -1

@@ -60,6 +60,8 @@ function mm_get_strings( $lang_base ) {
         'reset'            => 'Reset',
         'mode_manual'      => 'Manual',
         'count_mantra'     => '+ Count Mantra',
+        'lock_tap'         => 'Lock Tap',
+        'unlock_tap'       => 'Unlock Tap',
         'mode_auto'        => 'Auto Detection',
         'enable_voice'     => 'Enable Google Voice',
         'voice_off'        => 'Off',
@@ -105,6 +107,8 @@ function mm_get_strings( $lang_base ) {
             'reset'            => 'איפוס',
             'mode_manual'      => 'ידני',
             'count_mantra'     => '+ ספור מנטרה',
+            'lock_tap'         => 'נעל הקשה',
+            'unlock_tap'       => 'בטל נעילה',
             'mode_auto'        => 'זיהוי קולי',
             'enable_voice'     => 'הפעל זיהוי קול',
             'voice_off'        => 'כבוי',
@@ -198,9 +202,14 @@ function mm_shortcode( $atts ) {
 
             <div class="jmo-mode">
                 <span class="jmo-mode-label"><?php echo esc_html( $s['mode_manual'] ); ?></span>
-                <button class="jmo-btn jmo-btn-primary jmo-manual-btn" id="jmo-manual-btn">
-                    <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> / </span><span class="jmo-kbd">Space</span>
-                </button>
+                <div class="jmo-manual-row">
+                    <button class="jmo-btn jmo-btn-primary jmo-manual-btn" id="jmo-manual-btn">
+                        <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> / </span><span class="jmo-kbd">Space</span>
+                    </button>
+                    <button class="jmo-btn jmo-btn-secondary jmo-lock-btn" id="jmo-lock-toggle" type="button" aria-pressed="false">
+                        <?php echo esc_html( $s['lock_tap'] ); ?>
+                    </button>
+                </div>
             </div>
 
             <div class="jmo-mode">
