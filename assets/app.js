@@ -166,7 +166,7 @@
 
   function resetInactivity() {
     clearTimeout(inactivityTimeout);
-    inactivityTimeout = setTimeout(endSession, 60 * 1000);
+    inactivityTimeout = setTimeout(endSessionAutoSave, 60 * 1000);
   }
 
   function clearInactivity() {
@@ -451,6 +451,22 @@
     notesEl.value = '';
     modal.classList.add('jmo-open');
     modal.setAttribute('aria-hidden', 'false');
+  }
+
+  // Called after inactivity timeout: end, persist session, and skip modal prompt.
+  function endSessionAutoSave() {
+    if (!running) return;
+    running = false;
+    stopTimer();
+    stopVoice();
+    stopPace();
+    clearInactivity();
+
+    stopBtn.disabled = true;
+    if (count > 0 || elapsed > 0) {
+      saveSession(count, elapsed, I18N.auto_saved_inactivity || 'Auto-saved after inactivity');
+    }
+    doReset();
   }
 
   stopBtn.addEventListener('click',  endSession);

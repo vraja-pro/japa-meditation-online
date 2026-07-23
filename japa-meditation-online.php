@@ -93,6 +93,7 @@ function mm_get_strings( $lang_base ) {
         'word_krishna'     => 'Krishna',
         'word_rama'        => 'Rama',
         'total'            => 'Total',
+        'auto_saved_inactivity' => 'Auto-saved after inactivity',
     ];
 
     $translations = [
@@ -136,6 +137,7 @@ function mm_get_strings( $lang_base ) {
             'word_krishna'     => 'קְרִישְנָה',
             'word_rama'        => 'רָאמַה',
             'total'            => 'סה"כ',
+            'auto_saved_inactivity' => 'נשמר אוטומטית לאחר חוסר פעילות',
         ],
     ];
 
