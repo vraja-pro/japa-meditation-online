@@ -97,7 +97,7 @@ function mm_get_strings( $lang_base ) {
 
     $translations = [
         'he' => [
-            'title'            => 'מדיטציית ג׳פַּה אונליין',
+            'title'            => 'מדיטציית ג׳פּה אונליין',
             'mantras_label'    => 'מנטרות',
             'end_session'      => 'סיום תרגול',
             'reset'            => 'איפוס',

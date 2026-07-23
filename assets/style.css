@@ -35,7 +35,7 @@
   background: var(--jmo-bg);
   color: var(--jmo-text);
   max-width: 520px;
-  margin: 40px auto;
+  margin: 40px -30px -25px;
   padding: 0 16px 48px;
   text-align: center;
   position: relative;
@@ -135,6 +135,10 @@
   gap: 2px;
 }
 
+#jmo-voice-toggle {
+	display:none;
+}
+
 .jmo-count {
   font-family: 'Cormorant Garamond', serif;
   font-size: 3.8rem;
@@ -163,6 +167,7 @@
   align-items: baseline;
   gap: 4px;
   margin-top: 2px;
+  line-height: 0;
 }
 
 #jmo-rounds {
@@ -406,7 +411,7 @@
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  padding: 11px 24px;
+  padding: 5px 24px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -508,6 +513,7 @@
 
 @media (hover: none) and (pointer: coarse) {
   .jmo-kbd, .jmo-or { display: none; }
+  .jmo-mantra-word { font-size:14px; }
 }
 
 /* ── History ───────────────────────────────────────────── */
