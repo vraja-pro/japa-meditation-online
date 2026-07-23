@@ -507,18 +507,43 @@
   width: 100%;
 }
 
-.jmo-lock-btn {
-  flex: 0 0 auto;
-  min-width: 92px;
-  justify-content: center;
-  padding-left: 14px;
-  padding-right: 14px;
+.jmo-lock-panel {
+  flex: 0 0 180px;
+  background: var(--jmo-surface);
+  border: 1px solid var(--jmo-border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-.jmo-lock-btn.jmo-lock-btn-on {
-  background: var(--jmo-saffron);
-  border-color: var(--jmo-saffron-deep);
-  color: #fff;
+.jmo-lock-title {
+  font-size: .6rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--jmo-text-dim);
+}
+
+.jmo-lock-help {
+  margin: 0;
+  font-size: .66rem;
+  line-height: 1.3;
+  color: var(--jmo-text-dim);
+}
+
+.jmo-lock-toggle-wrap {
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: .72rem;
+  color: var(--jmo-text);
+}
+
+#jmo-root.jmo-lock-tap-on .jmo-lock-panel {
+  border-color: var(--jmo-saffron);
+  box-shadow: 0 0 0 2px rgba(217,104,20,.15);
 }
 
 #jmo-root.jmo-lock-tap-on .jmo-ring-wrap {
@@ -831,6 +856,10 @@
   text-align: right;
 }
 
+#jmo-root[dir="rtl"] .jmo-lock-panel {
+  text-align: right;
+}
+
 /* Mantra words stay LTR regardless — they are Sanskrit in Latin script */
 #jmo-root[dir="rtl"] .jmo-transcript {
   direction: ltr;
@@ -843,18 +872,23 @@
   .jmo-title { font-size: 1.25rem; }
   .jmo-controls { gap: 8px; }
   .jmo-btn { padding: 10px 16px; font-size: .72rem; }
-  .jmo-manual-row { width: 100%; }
+  .jmo-manual-row {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
   .jmo-manual-btn {
     padding-top: 14px;
     padding-bottom: 14px;
     font-size: .8rem;
     letter-spacing: .09em;
+    line-height: 30px;
   }
-  .jmo-lock-btn {
-    min-width: 106px;
-    padding-left: 12px;
-    padding-right: 12px;
-    font-size: .64rem;
+  .jmo-lock-panel {
+    flex: 1 1 auto;
+  }
+  .jmo-lock-toggle-wrap {
+    font-size: .68rem;
   }
 }
 

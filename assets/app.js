@@ -118,7 +118,8 @@
   const pacePlayBtn  = document.getElementById('jmo-pace-play');
   const pacePauseBtn = document.getElementById('jmo-pace-pause');
   const manualBtn    = document.getElementById('jmo-manual-btn');
-  const lockToggleBtn = document.getElementById('jmo-lock-toggle');
+  const lockToggleInput = document.getElementById('jmo-lock-toggle');
+  const lockToggleWrap = document.querySelector('.jmo-lock-toggle-wrap');
   const historyEl    = document.getElementById('jmo-history');
   const roundsEl     = document.getElementById('jmo-rounds');
   const modal        = document.getElementById('jmo-modal');
@@ -213,12 +214,8 @@
   function setLockTapMode(enabled) {
     lockTapMode = enabled;
     if (rootEl) rootEl.classList.toggle('jmo-lock-tap-on', enabled);
-    if (lockToggleBtn) {
-      lockToggleBtn.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-      lockToggleBtn.classList.toggle('jmo-lock-btn-on', enabled);
-      lockToggleBtn.textContent = enabled
-        ? (I18N.unlock_tap || 'Unlock Tap')
-        : (I18N.lock_tap || 'Lock Tap');
+    if (lockToggleInput) {
+      lockToggleInput.checked = enabled;
     }
   }
 
@@ -499,9 +496,9 @@
 
   manualBtn.addEventListener('click', () => { startSession(); incrementCount(1); });
 
-  if (lockToggleBtn) {
-    lockToggleBtn.addEventListener('click', () => {
-      setLockTapMode(!lockTapMode);
+  if (lockToggleInput) {
+    lockToggleInput.addEventListener('change', () => {
+      setLockTapMode(lockToggleInput.checked);
     });
   }
 
@@ -509,7 +506,7 @@
     rootEl.addEventListener('click', event => {
       if (!lockTapMode) return;
       if (modal.classList.contains('jmo-open')) return;
-      if (lockToggleBtn && lockToggleBtn.contains(event.target)) return;
+      if (lockToggleWrap && lockToggleWrap.contains(event.target)) return;
       if (manualBtn && manualBtn.contains(event.target)) return;
       startSession();
       incrementCount(1);

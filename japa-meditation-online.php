@@ -62,6 +62,9 @@ function mm_get_strings( $lang_base ) {
         'count_mantra'     => '+ Count Mantra',
         'lock_tap'         => 'Lock Tap',
         'unlock_tap'       => 'Unlock Tap',
+        'lock_mode_title'  => 'Lock Counting Mode',
+        'lock_mode_help'   => 'When enabled, tap anywhere in the app to count one mantra.',
+        'lock_mode_enable' => 'Enable',
         'mode_auto'        => 'Auto Detection',
         'enable_voice'     => 'Enable Google Voice',
         'voice_off'        => 'Off',
@@ -109,6 +112,9 @@ function mm_get_strings( $lang_base ) {
             'count_mantra'     => '+ ספור מנטרה',
             'lock_tap'         => 'נעל הקשה',
             'unlock_tap'       => 'בטל נעילה',
+            'lock_mode_title'  => 'מצב נעילת ספירה',
+            'lock_mode_help'   => 'כאשר מופעל, הקשה בכל מקום באפליקציה תספור מנטרה אחת.',
+            'lock_mode_enable' => 'הפעל',
             'mode_auto'        => 'זיהוי קולי',
             'enable_voice'     => 'הפעל זיהוי קול',
             'voice_off'        => 'כבוי',
@@ -128,8 +134,8 @@ function mm_get_strings( $lang_base ) {
             'notes_optional'   => '(אופציונלי)',
             'notes_placeholder'=> 'איך היה התרגול?…',
             'save'             => 'שמור תרגול',
-            'dismiss'          => 'סגור',
-            'discard'          => 'בטל',
+            'dismiss'          => 'חזרה לתרגול',
+            'discard'          => 'מחק',
             'voice_off_status' => 'זיהוי קול כבוי',
             'listening'        => 'מאזין…',
             'recognising'      => 'מזהה…',
@@ -206,9 +212,15 @@ function mm_shortcode( $atts ) {
                     <button class="jmo-btn jmo-btn-primary jmo-manual-btn" id="jmo-manual-btn">
                         <?php echo esc_html( $s['count_mantra'] ); ?> &nbsp;<span class="jmo-kbd">↑</span><span class="jmo-or"> / </span><span class="jmo-kbd">Space</span>
                     </button>
-                    <button class="jmo-btn jmo-btn-secondary jmo-lock-btn" id="jmo-lock-toggle" type="button" aria-pressed="false">
-                        <?php echo esc_html( $s['lock_tap'] ); ?>
-                    </button>
+                    <div class="jmo-lock-panel">
+                        <span class="jmo-lock-title"><?php echo esc_html( $s['lock_mode_title'] ); ?></span>
+                        <p class="jmo-lock-help"><?php echo esc_html( $s['lock_mode_help'] ); ?></p>
+                        <label class="jmo-toggle-wrap jmo-lock-toggle-wrap">
+                            <input type="checkbox" id="jmo-lock-toggle" />
+                            <span class="jmo-toggle-slider"></span>
+                            <span class="jmo-toggle-label"><?php echo esc_html( $s['lock_mode_enable'] ); ?></span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
