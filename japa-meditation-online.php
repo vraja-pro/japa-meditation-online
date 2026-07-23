@@ -79,6 +79,7 @@ function mm_get_strings( $lang_base ) {
         'notes_optional'   => '(optional)',
         'notes_placeholder'=> 'How was your practice?…',
         'save'             => 'Save Session',
+        'dismiss'          => 'Dismiss',
         'discard'          => 'Discard',
         'voice_off_status' => 'Voice detection off',
         'listening'        => 'Listening…',
@@ -123,6 +124,7 @@ function mm_get_strings( $lang_base ) {
             'notes_optional'   => '(אופציונלי)',
             'notes_placeholder'=> 'איך היה התרגול?…',
             'save'             => 'שמור תרגול',
+            'dismiss'          => 'סגור',
             'discard'          => 'בטל',
             'voice_off_status' => 'זיהוי קול כבוי',
             'listening'        => 'מאזין…',
@@ -271,6 +273,7 @@ function mm_shortcode( $atts ) {
             </div>
             <div class="jmo-modal-actions">
                 <button class="jmo-btn jmo-btn-primary" id="jmo-save-btn"><?php echo esc_html( $s['save'] ); ?></button>
+                <button class="jmo-btn jmo-btn-secondary" id="jmo-dismiss-btn"><?php echo esc_html( $s['dismiss'] ); ?></button>
                 <button class="jmo-btn jmo-btn-ghost"   id="jmo-discard-btn"><?php echo esc_html( $s['discard'] ); ?></button>
             </div>
         </div>

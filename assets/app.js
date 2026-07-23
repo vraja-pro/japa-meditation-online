@@ -96,6 +96,8 @@
   let paceMode          = false;
   let paceInterval      = null;
   let inactivityTimeout = null;
+  let modalInactivityTimeout = null;
+  let endedByInactivity = false;
   let paceSpeed      = 'medium';
 
   /* ═══════════════════════════════════════════════════════
@@ -122,6 +124,7 @@
   const modalTime    = document.getElementById('jmo-modal-time');
   const notesEl      = document.getElementById('jmo-notes');
   const saveBtn      = document.getElementById('jmo-save-btn');
+  const dismissBtn   = document.getElementById('jmo-dismiss-btn');
   const discardBtn   = document.getElementById('jmo-discard-btn');
   const langBadgeEl  = document.getElementById('jmo-lang-badge');
 
@@ -166,12 +169,27 @@
 
   function resetInactivity() {
     clearTimeout(inactivityTimeout);
-    inactivityTimeout = setTimeout(endSessionAutoSave, 60 * 1000);
+    inactivityTimeout = setTimeout(() => endSession({ reason: 'inactivity' }), 60 * 1000);
   }
 
   function clearInactivity() {
     clearTimeout(inactivityTimeout);
     inactivityTimeout = null;
+  }
+
+  function resetModalInactivityAutoSave() {
+    if (!endedByInactivity || !modal.classList.contains('jmo-open')) return;
+    clearTimeout(modalInactivityTimeout);
+    modalInactivityTimeout = setTimeout(() => {
+      saveSession(count, elapsed, I18N.auto_saved_inactivity || 'Auto-saved after inactivity');
+      closeModal();
+      doReset();
+    }, 60 * 1000);
+  }
+
+  function clearModalInactivityAutoSave() {
+    clearTimeout(modalInactivityTimeout);
+    modalInactivityTimeout = null;
   }
 
   function incrementCount(n) {
@@ -436,8 +454,10 @@
     if (paceMode)     startPace();
   }
 
-  function endSession() {
+  function endSession(options = {}) {
+    const reason = options.reason || 'manual';
     if (!running) return;
+    endedByInactivity = reason === 'inactivity';
     running = false;
     stopTimer();
     stopVoice();
@@ -451,25 +471,10 @@
     notesEl.value = '';
     modal.classList.add('jmo-open');
     modal.setAttribute('aria-hidden', 'false');
+    resetModalInactivityAutoSave();
   }
 
-  // Called after inactivity timeout: end, persist session, and skip modal prompt.
-  function endSessionAutoSave() {
-    if (!running) return;
-    running = false;
-    stopTimer();
-    stopVoice();
-    stopPace();
-    clearInactivity();
-
-    stopBtn.disabled = true;
-    if (count > 0 || elapsed > 0) {
-      saveSession(count, elapsed, I18N.auto_saved_inactivity || 'Auto-saved after inactivity');
-    }
-    doReset();
-  }
-
-  stopBtn.addEventListener('click',  endSession);
+  stopBtn.addEventListener('click', () => endSession({ reason: 'manual' }));
 
   resetBtn.addEventListener('click', () => {
     if (running) { running = false; stopTimer(); stopVoice(); stopPace(); clearInactivity(); }
@@ -493,11 +498,30 @@
      MODAL
   ═══════════════════════════════════════════════════════ */
   saveBtn.addEventListener('click',    () => { saveSession(count, elapsed, notesEl.value.trim()); closeModal(); doReset(); });
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+      closeModal();
+      if (endedByInactivity) {
+        endedByInactivity = false;
+        startSession();
+      }
+    });
+  }
   discardBtn.addEventListener('click', () => { closeModal(); doReset(); });
-  function closeModal() { modal.classList.remove('jmo-open'); modal.setAttribute('aria-hidden', 'true'); }
+  function closeModal() {
+    modal.classList.remove('jmo-open');
+    modal.setAttribute('aria-hidden', 'true');
+    clearModalInactivityAutoSave();
+  }
+
+  ['click', 'input', 'keydown', 'mousemove', 'touchstart'].forEach(eventName => {
+    modal.addEventListener(eventName, resetModalInactivityAutoSave);
+  });
 
   function doReset() {
     elapsed = 0; carryStreak = 0;
+    endedByInactivity = false;
+    clearModalInactivityAutoSave();
     timerEl.textContent = '00:00';
     setCount(0);
     initTranscript();
