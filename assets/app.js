@@ -217,6 +217,17 @@
     if (lockToggleInput) {
       lockToggleInput.checked = enabled;
     }
+
+    // Disable/enable other controls when lock mode changes
+    const controlButtons = [stopBtn, resetBtn, manualBtn, voiceToggle, pacePlayBtn, pacePauseBtn];
+    controlButtons.forEach(btn => {
+      if (btn) btn.disabled = enabled;
+    });
+    if (paceBtnsEl) {
+      paceBtnsEl.querySelectorAll('.jmo-pace-btn').forEach(btn => {
+        btn.disabled = enabled;
+      });
+    }
   }
 
   function spawnRipple() {
