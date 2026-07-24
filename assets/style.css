@@ -519,6 +519,10 @@
   gap: 6px;
 }
 
+.jmo-lock-panel input[type=checkbox]{
+	display: none;
+}
+
 .jmo-lock-title {
   font-size: .6rem;
   font-weight: 600;
@@ -527,8 +531,9 @@
   color: var(--jmo-text-dim);
 }
 
-.jmo-lock-help {
-  margin: 0;
+p.jmo-lock-help {
+  margin-top: 0!important;
+  margin-bottom: 0!important;
   font-size: .66rem;
   line-height: 1.3;
   color: var(--jmo-text-dim);
@@ -921,5 +926,9 @@
 
   .jmo-modes {
     margin-bottom: 16px;
+  }
+	
+  .jmo-lock-panel {
+	  display:none;
   }
 }
